@@ -177,7 +177,6 @@ function ProductPage() {
 
     window.addEventListener('click', (e: any) => {
 
-
       if (!e.target.classList.contains('divProductActionQuantityText')) {
         setShowFirmTip(false);
         setShowPersonTip(false);
@@ -361,7 +360,7 @@ function ProductPage() {
 
         })
       }
-    }, 1500);
+    }, 100);
     // }, 2500);
 
   }, [openPhotoSwipe])
@@ -881,11 +880,12 @@ function ProductPage() {
                   effect='blur'
                   id={'productShowcaseImage'}
                   onClick={() => {
+                    alert("Pressed");
                     hideBackToTop(true);
                     setOpenPhotoSwipe(true);
                   }}
                   alt={product?.naziv_artikla}
-                  src={Array.isArray(product?.slike) ? '/products/' + getImagePath(product, dimensionChosen) + '.webp' : imageSrc}
+                  src={Array.isArray(product?.slike) ? `${baseApi}/assets/products/` + getImagePath(product, dimensionChosen) + '.webp' : imageSrc}
                   onContextMenu={() => { return false }}
                 />
               </div>
@@ -952,7 +952,7 @@ function ProductPage() {
                           effect='blur'
                           alt={product?.naziv_artikla}
                           src={
-                            '/products/' +
+                            `${baseApi}/assets/products/` +
                             getImagePath(product as Product, index) +
                             '.webp'
                           }

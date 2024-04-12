@@ -1,9 +1,8 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { Card, Image, Pagination } from 'antd';
 import { useNavigate } from 'react-router-dom';
 
-import products from './products.json';
 
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import { Product } from '../Content/AffiliateLayers/ProductPage';
@@ -14,33 +13,26 @@ import axios from 'axios';
 
 
 const { Meta } = Card;
-//let products=[{}];
-
-/*const fetchProducts = async () => {
-  try {
-    const token: string | null = localStorage.getItem('accessToken');
-    console.log("-----------TOKEN------------",token);
-    if (token) {
-      await axios.get(`${baseApi}/products/getProducts`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        },
-      }).then(res => {
-        //products=res.data.data;
-      })
-        .catch(err => {
-
-        });
-    }
-  } catch (error) {
-
-    console.error('Error fetching products:', error);
-  }
-};*/
 
 function JsonView() {
   const navigate = useNavigate();
   const routeHistoryUpdate = useBreadCrumbsUpdateContext();
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    const token: string | null = localStorage.getItem('accessToken');
+    console.log("-----------TOKEN------------", token);
+    if (token) {
+      axios.get(`${baseApi}/products/getProducts`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+      }).then(res => {
+        if (res.data.data)
+          setProducts(res.data.data);
+      });
+    }
+  }, []);
 
   return (
     <div className="container">
@@ -56,11 +48,11 @@ function JsonView() {
         style={{ padding: '0px 0px 0px 0px' }}
       >
         <div className="productPageContainer">
-          <div className="divProductStoreContainer container jsonViewContainer" style={{marginLeft: "0px !important"}}>
-            {products.filter((product :any) => product?.stiker.includes("NOVO") || Array.from(product?.stiker).includes("NOVO")).map((product :any, index :number) => {
-               const stickerIndex =  Array.from(product?.stiker).indexOf("NOVO");
-               console.log("aaa", stickerIndex, product.naziv_artikla)
-               const imagePath = getImagePath(product as Product, stickerIndex === -1 ? undefined : stickerIndex);
+          <div className="divProductStoreContainer container jsonViewContainer" style={{ marginLeft: "0px !important" }}>
+            {products.filter((product: any) => product?.stiker.includes("NOVO") || Array.from(product?.stiker).includes("NOVO")).map((product: any, index: number) => {
+              const stickerIndex = Array.from(product?.stiker).indexOf("NOVO");
+              console.log("aaa", stickerIndex, product.naziv_artikla)
+              const imagePath = getImagePath(product as Product, stickerIndex === -1 ? undefined : stickerIndex);
               return (
                 <div style={{ position: 'relative' }}>
                   <div className="product-card__badges-list">
@@ -92,10 +84,10 @@ function JsonView() {
                       <LazyLoadImage effect="blur"
                         alt={product?.naziv_artikla}
                         src={`${baseApi}/assets/products/` + imagePath + '.webp'}
-                        // src={   
-                        //   pictures.find((el: any) => el.name === product?.naziv_artikla)
-                        //     ?.picture
-                        // }
+                      // src={   
+                      //   pictures.find((el: any) => el.name === product?.naziv_artikla)
+                      //     ?.picture
+                      // }
                       />
                     }
                   >
@@ -103,15 +95,15 @@ function JsonView() {
                       title={
                         <div className="product-card__code">
                           {'Sifra: '}{' '}
-                              <strong
-                                style={{ color: '#004D8C', marginLeft: '2px' }}
-                              >
-                                {product && Array.isArray(product?.stiker) &&
-                                Array.isArray(product?.sifra_proizvoda)
-                                  ? product?.sifra_proizvoda[stickerIndex]
-                                  : !Array.isArray(product?.stiker) &&
-                                  Array.isArray(product?.sifra_proizvoda) ? product?.sifra_proizvoda[0]: product?.sifra_proizvoda}
-                              </strong>
+                          <strong
+                            style={{ color: '#004D8C', marginLeft: '2px' }}
+                          >
+                            {product && Array.isArray(product?.stiker) &&
+                              Array.isArray(product?.sifra_proizvoda)
+                              ? product?.sifra_proizvoda[stickerIndex]
+                              : !Array.isArray(product?.stiker) &&
+                                Array.isArray(product?.sifra_proizvoda) ? product?.sifra_proizvoda[0] : product?.sifra_proizvoda}
+                          </strong>
                         </div>
                       }
                       description={
@@ -121,13 +113,13 @@ function JsonView() {
                           </a>
                           {/* <p>{product?.meta_description}</p> */}
                           {product?.meta_description && !Array.isArray(product?.meta_description) &&
-                                product?.meta_description.length > 5 && (
-                                  <p>{product?.meta_description}</p>
-                                )}
-                              {product?.meta_description &&
-                                Array.isArray(product?.meta_description) && (
-                                  <p>{product?.meta_description[0]}</p>
-                                )}
+                            product?.meta_description.length > 5 && (
+                              <p>{product?.meta_description}</p>
+                            )}
+                          {product?.meta_description &&
+                            Array.isArray(product?.meta_description) && (
+                              <p>{product?.meta_description[0]}</p>
+                            )}
                         </div>
                       }
                     />
