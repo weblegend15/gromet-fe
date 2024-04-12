@@ -16,7 +16,7 @@ import {
   useBreadCrumbsUpdateContext,
 } from '../Context/BreadCrumbsContext';
 import { Card } from 'antd';
-import products from './products.json';
+//import products from './products.json';
 import { CheckboxChangeEventTarget } from 'antd/es/checkbox/Checkbox';
 
 import type { MenuProps } from 'antd';
@@ -453,6 +453,7 @@ function StorePage() {
     routeHistoryUpdate(['Početna', 'Proizvodi']);
   }, []);
   
+
   const clearAllCategories = () => {
     const ul = document.querySelector('.ulProductStoreFiltercheckboxes');
 
@@ -514,6 +515,7 @@ function StorePage() {
     setFilteredProducts(productsList);
     handlePageChange(1);
   };
+
 
   const clearAllFilterStickers = () => {
     const ul = document.querySelector('.ulProductStoreFiltercheckboxes');
@@ -1139,6 +1141,9 @@ function StorePage() {
                 .slice(minPage, maxPage)
                 .map((product, index) => {
                   const imagePath = getImagePath(product as Product);
+
+                  console.log(`/proizvod${product?.url}`);
+
                   return (
                     <a style={{ position: 'relative' }} href={`/proizvod${product?.url}`}>
                       {(Array.isArray(product?.stiker) ? product?.stiker.includes('NOVO') : product?.stiker === 'NOVO') && 
@@ -1180,7 +1185,7 @@ function StorePage() {
                           <LazyLoadImage
                             style={{ width: '100% !important' }}
                             alt={product.naziv_artikla}
-                            src={'/products/' + imagePath + '.webp'}
+                            src={`${baseApi}/assets/products/` + imagePath + '.webp'}
                             effect='blur'
                           />
                         }
@@ -1258,7 +1263,7 @@ function StorePage() {
               return <ProductCard
               key={index}
               product={product as Product}
-              picture={"/products/"+imagePath+".webp"}
+              picture={`${baseApi}/assets/products/`+imagePath+".webp"}
               ></ProductCard>
             })}
           </Row>

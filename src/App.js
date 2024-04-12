@@ -28,7 +28,7 @@ import moment from 'moment'
 import TagManager from 'react-gtm-module'
 import BlogItemPageTwo from './components/Pages/BlogItemPageTwo';
 
-import products from './components/Content/AffiliateLayers/EditLayer/products.json';
+//import products from './components/Content/AffiliateLayers/EditLayer/products.json';
 
 import { Helmet } from "react-helmet";
 import NotFound404 from './components/ErrorPages/404Page';
@@ -72,25 +72,84 @@ function App() {
 
     useEffect(() => {
         const interval = setInterval(() => {
-            console.log("first interval called")
+            
             const imgs = document.querySelectorAll('img');
             imgs.forEach((img) => img.addEventListener('contextmenu', (e) => { e.preventDefault() }))
             if (interval) {
 
-                console.log("first interval gone")
+                
                 clearInterval(interval);
             }
         }, 2000);
         const now = new Date(Date.now());
         const diff = moment().diff("2023-08-15", "days");
-        console.log("first dateeee", now, Date.now(), diff);
+        //console.log("first dateeee", now, Date.now(), diff);
         const app = document.querySelector("body");
         if (app) {
             // app.style.opacity = (100 - diff)/100;
         }
         //  setIntervals(interval);
     });
-
+    const products = [{
+    "polje_id": "1",
+    "sifra_proizvoda": [
+        "DFM50E",
+        "DFM50B",
+        "JFM50B",
+        "FM50B"
+    ],
+    "naziv_artikla": "Fasadna mrežica BASIC plava",
+    "naziv_proizvoda_model": [
+        "4x4mm, EKO",
+        "4x4mm,  EKO LIGHT",
+        "4x4mm,  EKO (STANDARD)",
+        "5x5mm"
+    ],
+    "varijacije": [
+        "sifra_proizvoda",
+        "naziv_proizvoda_model",
+        "stiker"
+    ],
+    "meta_description": "Fasadna ili armaturna mrežica koristi se kod fasadnih izolacionih sistema  kako bi se osigurala čvršća veza termoizolacionih materijala.",
+    "prosireni_opis": "Staklena mrežica za malter ili stiropor  je laka i veoma čvrsta. Napravljena je od nezapaljivog materijala i zato se često koristi kod gipsarskih fasada. Izuzetno je postojana i otporna na hemijske uticaje i UV zrake. ",
+    "jedinica_mere": "m2",
+    "kategorija_artikla": "Fasadne mrežice",
+    "potkategorija": "Ostalo",
+    "potkategorija_lista": "/",
+    "minimalno_pakovanje": "50",
+    "transportno_pakovanje": "2000",
+    "zapremina": "/",
+    "kvadratura": "50m2",
+    "sirina": "1m",
+    "duzina": "50m",
+    "visina": "/",
+    "precnik": "/",
+    "debljina": "/",
+    "tezina": "/",
+    "sastav": "Alkali, fiberglass, organska materija ",
+    "boja": "Plava",
+    "stiker": [
+        "NOVO",
+        "/",
+        "/",
+        "/"
+    ],
+    "qr_kod": "https://gromet.rs/shop/1/",
+    "slike": "1-dfm50b-fasadna-mrezica-basic-plava",
+    "model_vise_slika": "FALSE",
+    "url": "/fasadna-mrezica-basic-plava",
+    "tehnicki_crtez": "/",
+    "tip_otpornosti": "Alkalna, hemijska, mehanička, vodootpornost, ne gori",
+    "garancija": "/",
+    "rok_trajanja": "/",
+    "sertifikat": "/",
+    "mesto_i_nacin_skladistenja": " Na suvom mestu, zaštiti od direktnog zračenja sunca ",
+    "dimenzije_pakovanja": "/",
+    "prateca_oprema_dodaci": "Gleterica",
+    "dodatne_napomene": "/",
+    "mesta_primene": "/",
+    "nacin_ugradnje": "/"
+}];
     const [isModalOpen, setIsModalOpen] = useState(!localStorage.getItem('showedCookiesModal'));
     const [isOptionsOpen, setIsOptionsOpen] = useState(false);
     const showModal = () => {

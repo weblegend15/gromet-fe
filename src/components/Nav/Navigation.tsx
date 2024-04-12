@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import './Navigation.css'; // Import css modules stylesheet as styles
 
 import {
@@ -14,9 +14,11 @@ import { Input } from 'antd';
 import useWindowWidth from '../../hooks/useWindowWidth';
 import MenuBtn from './MenuBtn';
 
-import products from '../Content/AffiliateLayers/EditLayer/products.json';
+//import products from '../Content/AffiliateLayers/EditLayer/products.json';
 import SearchResultItem from './SearchResultItem';
 import { contentStyle } from '../Pages/Home';
+import axios from 'axios';
+import { baseApi } from '../../constants';
 
 var unidecode = require('unidecode');
 
@@ -39,8 +41,21 @@ function Navigation() {
   const [searchResult, setSearchResult] = useState<string[]>([]);
   const [showSearchResultModal, setShowSearchResultModal] = useState(false);
   // const [displaySearch, setDisplaySearch] = useState(true);
-  const [productsList, setProductList] = useState([...products]);
+  
+  const [productsList, setProductList] = useState<any[]>([]);//useState([]);//useState([...products]);
   const [showSearch, setShowSearch] = useState(false);
+
+  useEffect(() => {
+    let token = localStorage.getItem('accessToken');
+    axios.get(`${baseApi}/products/getProducts`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+    }).then(res => {
+      if (res.data.data)
+        setProductList(res.data.data);
+    });
+  }, []);
 
   const handleSearchChange = (e: any) => {
 

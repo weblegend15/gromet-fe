@@ -3,6 +3,7 @@ import { Product } from '../Content/AffiliateLayers/ProductPage';
 import './SearchResultItem.css';
 import { getImagePath } from '../../hooks/helpers';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
+import { baseApi } from '../../constants';
 function SearchResultItem({product} :any) {
 
 
@@ -12,7 +13,7 @@ function SearchResultItem({product} :any) {
             <div className='divSearchResultContainer'>
                 <div className='divSearchResultImageContainer'>
                     <LazyLoadImage effect="blur"
-                    src={"/products/"+imagePath+".webp"}
+                    src={`${baseApi}/assets/products/`+imagePath+".webp"}
                     />
                 </div>
                 <div className='divSearchResultItemColumn'>

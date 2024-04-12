@@ -1,6 +1,6 @@
 import './ProductPage.css';
 import React, { useEffect, useRef, useState } from 'react';
-import {  RightOutlined, LeftOutlined } from '@ant-design/icons';
+import { RightOutlined, LeftOutlined } from '@ant-design/icons';
 import {
   Row,
   Tabs,
@@ -10,7 +10,7 @@ import { Button, Radio, Dropdown } from 'antd';
 import type { MenuProps } from 'antd';
 import { useBreadCrumbsUpdateContext } from './Context/BreadCrumbsContext';
 
-import products from './EditLayer/products.json';
+//import products from './EditLayer/products.json';
 
 import 'react-photoswipe/lib/photoswipe.css';
 import ProductCard from './ProductCard/ProductCard';
@@ -34,7 +34,9 @@ import Zoom from 'yet-another-react-lightbox/plugins/zoom';
 import Thumbnails from 'yet-another-react-lightbox/plugins/thumbnails';
 import { preventImgRightClick } from '../../../helpers/helpers';
 import { composite_categories, subCategoryLocalStorageList } from './EditLayer/StorePage';
-import {Helmet} from "react-helmet";
+import { Helmet } from "react-helmet";
+import { baseApi } from '../../../constants';
+import axios, { AxiosResponse } from 'axios';
 
 
 export interface Product {
@@ -130,33 +132,57 @@ function ProductPage() {
   const [showPersonTip, setShowPersonTip] = useState<boolean>(false);
   const [showShipmentTip, setShowShipmentTip] = useState<boolean>(false);
 
-  const [productsList, setProductList] = useState([...products]);
+  const [productsList, setProductList] = useState<Product[]>([]);//useState([]);//useState([...products]);
+
   const [product, setProduct] = useState<Product>({} as Product);
 
   const myRef = useRef<HTMLDivElement>(null);
 
   const executeScroll = () => {
-    console.log("first", myRef?.current)
-   if(myRef?.current){
-     const y = myRef.current.offsetTop;
-     const x= myRef.current.offsetLeft;
-     console.log("first2", myRef?.current,x, y)
-    window.scrollTo({top: y-100, left: x, behavior:  "smooth"})
-    //  myRef.current.scrollTo({ behavior: 'smooth'});//.scrollIntoView({ behavior: 'smooth', block: 'start' });   
-   }
+    //console.log("first", myRef?.current)
+    if (myRef?.current) {
+      const y = myRef.current.offsetTop;
+      const x = myRef.current.offsetLeft;
+      //console.log("first2", myRef?.current,x, y)
+      window.scrollTo({ top: y - 100, left: x, behavior: "smooth" })
+      //  myRef.current.scrollTo({ behavior: 'smooth'});//.scrollIntoView({ behavior: 'smooth', block: 'start' });   
+    }
   }
+  const fetchProducts = async () => {
+    try {
+      const token: string | null = localStorage.getItem('accessToken');
+      if (token) {
+
+        return await axios.get(`${baseApi}/products/getProducts`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          },
+        }).then(res => {
+          return res.data.data;
+          console.log("------------FETCHIED DATA------");
+          console.log(res.data.data);
+        })
+          .catch(err => {
+
+          });
+      }
+    } catch (error) {
+
+      console.error('Error fetching products:', error);
+    }
+  };
   useEffect(() => {
 
     window.scrollTo(0, 0);
 
     window.addEventListener('click', (e: any) => {
-   
+
 
       if (!e.target.classList.contains('divProductActionQuantityText')) {
         setShowFirmTip(false);
         setShowPersonTip(false);
       }
-      if(!e.target.classList.contains('spanTroskoviIsporuke')){
+      if (!e.target.classList.contains('spanTroskoviIsporuke')) {
         setShowShipmentTip(false);
       }
       if (!e.target.classList.contains('productPageShareIconLabelButton')) {
@@ -165,13 +191,13 @@ function ProductPage() {
     });
 
     const btn_left = document.getElementById('btn-left'),
-    btn_right = document.getElementById('btn-right'),
-    btn_left2 = document.getElementById('btn-left2'),
-    btn_right2 = document.getElementById('btn-right2'),
-    content = document.querySelector('.divProductScrollContainer'),
-    content2 = document.querySelector('.divProductScrollContainer2');
+      btn_right = document.getElementById('btn-right'),
+      btn_left2 = document.getElementById('btn-left2'),
+      btn_right2 = document.getElementById('btn-right2'),
+      content = document.querySelector('.divProductScrollContainer'),
+      content2 = document.querySelector('.divProductScrollContainer2');
     // console.log(btn_left, btn_right, content, content2)
-    if(content && btn_left && btn_right && btn_left2 && btn_right2 && content2) {
+    if (content && btn_left && btn_right && btn_left2 && btn_right2 && content2) {
       const content_scroll_width = content.scrollWidth;
       let content_scoll_left = content.scrollLeft;
 
@@ -180,92 +206,100 @@ function ProductPage() {
       btn_right.addEventListener('click', () => {
         // console.log("first right clicked", content_scoll_left, content_scroll_width)
         content_scoll_left += 150;
-      if (content_scoll_left >= content_scroll_width) { content_scoll_left = content_scroll_width; }
-      content.scrollLeft = content_scoll_left;
+        if (content_scoll_left >= content_scroll_width) { content_scoll_left = content_scroll_width; }
+        content.scrollLeft = content_scoll_left;
       });
 
 
       btn_left.addEventListener('click', () => {
         content_scoll_left -= 150;
         if (content_scoll_left <= 0) {
-            content_scoll_left = 0;
+          content_scoll_left = 0;
         }
         content.scrollLeft = content_scoll_left;
-     
+
       });
 
       btn_right2.addEventListener('click', () => {
-      
+
         content2_scroll_left += 150;
-      if (content2_scroll_left >= content2_scroll_width) { content2_scroll_left = content2_scroll_width; }
-      content2.scrollLeft = content2_scroll_left;
+        if (content2_scroll_left >= content2_scroll_width) { content2_scroll_left = content2_scroll_width; }
+        content2.scrollLeft = content2_scroll_left;
       });
 
 
       btn_left2.addEventListener('click', () => {
         content2_scroll_left -= 150;
         if (content2_scroll_left <= 0) {
-            content2_scroll_left = 0;
+          content2_scroll_left = 0;
         }
         content2.scrollLeft = content2_scroll_left;
       });
     }
     preventImgRightClick();
     const imgs = document.querySelectorAll('img');
-    imgs.forEach((img) => img.addEventListener('contextmenu', (e) => {e.preventDefault()}))
+    imgs.forEach((img) => img.addEventListener('contextmenu', (e) => { e.preventDefault() }))
   }, []);
 
   useEffect(() => {
-    const indexSlash = window.location.pathname.lastIndexOf('proizvod/');
-    const id = decodeURI(window.location.pathname.substring(indexSlash + 1 + 'proizvod'.length - 1));
-    const product = productsList.find((product) => product?.url === id);
-    console.log('product:', product, id, indexSlash, productsList, productsList.findIndex(product => product.url === id));
-    setProduct(product as Product);
-    // routeHistoryUpdate(["Početna", "Proizvodi", product?.name]);
-    if(product){
-      document.title = product.naziv_artikla;
-      // setTimeout(() => {
-        
-        if(!window.location.hash){
+    fetchProducts().then(productlist => {
+      setProductList(productlist);
+
+      const indexSlash = window.location.pathname.lastIndexOf('proizvod/');
+      const id = decodeURI(window.location.pathname.substring(indexSlash + 1 + 'proizvod'.length - 1));
+      const product = productlist.find((product : Product) => product?.url === id);
+
+      console.log("-----------PRODUCTSList---------", productsList);
+      console.log("-----------PRODUCTSlist---------", productlist);
+      console.log('product:', product, id, indexSlash, productsList, productsList.findIndex(product => product.url === id));
+
+
+      if (product) {
+        document.title = product.naziv_artikla;
+        // setTimeout(() => {
+        setProduct(product as Product);
+        if (!window.location.hash) {
           // window.location.hash = product?.sifra_proizvoda[dimensionChosen];
-        }else if(Array.isArray(product.sifra_proizvoda)){
+        } else if (Array.isArray(product.sifra_proizvoda)) {
           // const hashValue = window.location.hash.substring(1);
           const index = getDimensionIndex();
-          console.log("hashValue", index);
+          //console.log("hashValue", index);
           setDimensionChosen(index);
         }
+      }
+    })
+    // routeHistoryUpdate(["Početna", "Proizvodi", product?.name]);
 
-    }else{
-      window.location.href = '/404';
-    }
+    // }else{
+    //   window.location.href = '/404';
+    // }
     routeHistoryUpdate(['Početna', 'Proizvodi', product?.naziv_artikla]);
-  }, [window.location, product]);
+  }, [window.location]);
 
   const getDimensionIndex = () => {
-    let index = 0;
-    // console.log("logging values", product.sifra_proizvoda,)
-    if(product.sifra_proizvoda){
+    let index = 0
+    if (product.sifra_proizvoda) {
 
-      if(!window.location.hash){
+      if (!window.location.hash) {
         // window.location.hash = product?.sifra_proizvoda[dimensionChosen];
-      }else if(Array.isArray(product.sifra_proizvoda)){
+      } else if (Array.isArray(product.sifra_proizvoda)) {
         const hashValue = window.location.hash.substring(1);
         index = product.sifra_proizvoda.indexOf(hashValue);
-        console.log("dimension index called", hashValue, index);
-        // setDimensionChosen(index);
+        //console.log("dimension index called", hashValue, index);
+        //setDimensionChosen(index);
       }
     }
     return index;
   }
 
   useEffect(() => {
-    console.log("first call ", dimensionChosen)    
+    //console.log("first call ", dimensionChosen)    
     window.onpopstate = e => {
       const index = getDimensionIndex();
-          console.log("hashValue2222", index);
-          setDimensionChosen(index);
+      //console.log("hashValue2222", index);
+      setDimensionChosen(index);
     };
-  }, );
+  },);
 
   // INFO TOUR BEGIN
 
@@ -276,7 +310,7 @@ function ProductPage() {
 
   // tabs section begin
   const onChange = (key: string) => {
-    console.log(key);
+    //console.log(key);
   };
 
 
@@ -289,7 +323,8 @@ function ProductPage() {
   const zoomImagePath = getImagePath(product as Product);
 
   const imagePath = getImagePath(product as Product);
-  const imageSrc = '/products/' + imagePath + '.webp';
+  
+  const imageSrc = `${baseApi}/assets/products/` + imagePath + '.webp';
 
   const handleProductImgThumbnailSelected = (e: any) => {
     const parent = document.querySelector('.small-products-images');
@@ -297,7 +332,7 @@ function ProductPage() {
     previous.forEach(prev => prev.classList.remove('divProductImgSelectedThumbnail'));
     const divSelected = e as HTMLImageElement;
     divSelected.classList.add('divProductImgSelectedThumbnail');
-    console.log(previous, divSelected);
+    //console.log(previous, divSelected);
     const showCaseImg = document.querySelector(
       '#productShowcaseImage'
     ) as HTMLImageElement;
@@ -307,29 +342,29 @@ function ProductPage() {
   };
 
 
-  useEffect(()=> {
+  useEffect(() => {
     setTimeout(() => {
-    const wrapper = document.querySelector('.yarl__fullsize');
-    console.log('wrapper',wrapper);
-    // setTimeout(() => {
-      if(wrapper){
-        console.log("binding event!!!")
-        wrapper?.addEventListener('click', (e)=> {
+      const wrapper = document.querySelector('.yarl__fullsize');
+      //console.log('wrapper',wrapper);
+      // setTimeout(() => {
+      if (wrapper) {
+        //console.log("binding event!!!")
+        wrapper?.addEventListener('click', (e) => {
           const target = e.target as HTMLElement;
-          console.log(target, target.classList);
-          
-          if(target.classList.contains('yarl__slide_image')){
+          //console.log(target, target.classList);
+
+          if (target.classList.contains('yarl__slide_image')) {
             return
           }
           setOpenPhotoSwipe(false);
-          console.log("closed!!!");
-          
+          //console.log("closed!!!");
+
         })
       }
     }, 1500);
-      // }, 2500);
+    // }, 2500);
 
-  },[openPhotoSwipe])
+  }, [openPhotoSwipe])
 
   const zoomRef: any = React.useRef(null);
   const thumbnailsRef: any = React.useRef(null);
@@ -339,7 +374,7 @@ function ProductPage() {
     {
       forceRender: true,
       key: '1',
-      label: <label id='Specifikacije'  className=''>Specifikacije</label>,
+      label: <label id='Specifikacije' className=''>Specifikacije</label>,
       children: (
         <>
           <div className='product-tabs__content'>
@@ -444,7 +479,7 @@ function ProductPage() {
                         : product.debljina}
                     </div>
                   </div>
-                 {product?.kategorija_artikla === "HIDROIZOLACIJA" && <div
+                  {product?.kategorija_artikla === "HIDROIZOLACIJA" && <div
                     className='spec__row'
                     style={{
                       display: product.tezina === '/' ? 'none' : 'flex',
@@ -675,18 +710,17 @@ function ProductPage() {
 
   useEffect(() => {
     const SelectedImgs = document.querySelectorAll('.divProductImg');
-    SelectedImgs.forEach((img, index) =>{
+    SelectedImgs.forEach((img, index) => {
       // const index = img?.parentElement?.getAttribute('data-index') as any;
       // const childIndex =  img.getAttribute('data-index') as any;
-      console.log("first",dimensionChosen, index, SelectedImgs)
-      if(dimensionChosen !== index)
+      //console.log("first",dimensionChosen, index, SelectedImgs)
+      if (dimensionChosen !== index)
         img.classList.remove('divProductImgSelectedThumbnail');
-        img.parentElement!.classList.remove('divProductImgSelectedThumbnail');
-      })  
+      img.parentElement!.classList.remove('divProductImgSelectedThumbnail');
+    })
   }, [dimensionChosen])
-  const slides = Array.isArray(product.slike) ? product.slike.map((img :any, index :number) => {return { src: '/products/' + img + '.webp' }}) :
-  [{ src: '/products/' + zoomImagePath + '.webp' }]
-  console.log(slides, );
+  const slides = Array.isArray(product.slike) ? product.slike.map((img: any, index: number) => { return { src: `${baseApi}/assets/products/` + img + '.webp' } }) :
+    [{ src: `${baseApi}/assets/products/` + zoomImagePath + '.webp' }]
 
   // share button dropdown props;
 
@@ -697,7 +731,7 @@ function ProductPage() {
         <a
           target='_blank'
           rel='noopener noreferrer'
-          href={'viber://forward?text='+ encodeURIComponent("Pogledaj detalje ovog proizvoda na sajtu grometa"+ " " + window.location.href)}
+          href={'viber://forward?text=' + encodeURIComponent("Pogledaj detalje ovog proizvoda na sajtu grometa" + " " + window.location.href)}
         >
           <img className='imgShareButtonDropDownIcon' src={icon_viber}></img>
           Viber
@@ -710,7 +744,7 @@ function ProductPage() {
         <a
           target='_blank'
           rel='noopener noreferrer'
-          href={'https://www.facebook.com/sharer/sharer.php?u='+ (window.location.href)}
+          href={'https://www.facebook.com/sharer/sharer.php?u=' + (window.location.href)}
         >
           <img className='imgShareButtonDropDownIcon' src={icon_facebook}></img>
           Facebook
@@ -755,7 +789,7 @@ function ProductPage() {
         <a
           target='_blank'
           rel='noopener noreferrer'
-          href={`mailto:?subject=${product?.naziv_artikla}&body=Pogledaj detalje ovog proizvoda na sajtu grometa`+window.location.href}
+          href={`mailto:?subject=${product?.naziv_artikla}&body=Pogledaj detalje ovog proizvoda na sajtu grometa` + window.location.href}
         >
           <img className='imgShareButtonDropDownIcon' src={icon_email}></img>
           Email
@@ -779,13 +813,13 @@ function ProductPage() {
 
   const handleShopRedirect = () => {
     const hasSubcategories = composite_categories.map(cat => cat.toLowerCase()).includes(product.kategorija_artikla.toLowerCase());
-    console.log("handle shop redirect", product.kategorija_artikla, composite_categories);
-    if(hasSubcategories){
+    //console.log("handle shop redirect", product.kategorija_artikla, composite_categories);
+    if (hasSubcategories) {
       const subcategoryIndex = composite_categories.map(cat => cat.toLowerCase()).indexOf(product.kategorija_artikla.toLowerCase());
       const subcategories = subCategoryLocalStorageList[subcategoryIndex];
-     
+
       localStorage.setItem('potkategorije', subcategories);
-      console.log("subcats", subcategories, product.kategorija_artikla + subcategories.toString());
+      //console.log("subcats", subcategories, product.kategorija_artikla + subcategories.toString());
     }
     setTimeout(() => {
       window.location.href = `/proizvodi#filteri=${product?.kategorija_artikla}&stranica=1`
@@ -795,25 +829,25 @@ function ProductPage() {
   return (
     <div className='singleProductPageContainer container'>
       <Helmet>
-          <title>{product?.naziv_artikla}</title>
-          <meta name="description" content={product.meta_description} />
-          <meta property="og:image" content={'/products/' + zoomImagePath + '.webp'}/>
+        <title>{product?.naziv_artikla}</title>
+        <meta name="description" content={product.meta_description} />
+        <meta property="og:image" content={`${baseApi}/assets/products/` + zoomImagePath + '.webp'} />
       </Helmet>
       {/* { openPhotoSwipe &&  */}
-    {product && product.slike &&  <Lightbox
-        animation={{swipe: 0, zoom: 3}}
+      {product && product.slike && <Lightbox
+        animation={{ swipe: 0, zoom: 3 }}
         open={openPhotoSwipe}
         close={() => setOpenPhotoSwipe(false)}
         carousel={{ preload: 1, finite: true }}
         slides={
-          Array.isArray(product.slike) && !product.slike[0].includes(',') ? 
-          [{src: (ref1?.current?.childNodes[0].childNodes[0] as any)?.src},...product.slike.map((img :any, index :number) => {return { src: '/products/' + img + '.webp' }})] 
-          : Array.isArray(product.slike) && product.slike[0].includes(',') ? product.slike.map(item => {return item.split(',').map(subitem => {return {src: '/products/'+ subitem +'.webp'}})}).flat()
-          : !Array.isArray(product.slike) && product?.slike && product?.slike?.includes(',') ?
-            [...product?.slike?.split(',').map((img :any, index :number) => {return { src: '/products/' + img + '.webp' }})] 
-          :
-          [{ src: '/products/' + zoomImagePath + '.webp' }] 
-          
+          Array.isArray(product.slike) && !product.slike[0].includes(',') ?
+            [{ src: (ref1?.current?.childNodes[0].childNodes[0] as any)?.src }, ...product.slike.map((img: any, index: number) => { return { src: '${baseApi}/assets/products/' + img + '.webp' } })]
+            : Array.isArray(product.slike) && product.slike[0].includes(',') ? product.slike.map(item => { return item.split(',').map(subitem => { return { src: `${baseApi}/assets/products/` + subitem + '.webp' } }) }).flat()
+              : !Array.isArray(product.slike) && product?.slike && product?.slike?.includes(',') ?
+                [...product?.slike?.split(',').map((img: any, index: number) => { return { src: `${baseApi}/assets/products/` + img + '.webp' } })]
+                :
+                [{ src: `${baseApi}/assets/products/` + zoomImagePath + '.webp' }]
+
         }
         plugins={[Counter, Slideshow, Zoom, Thumbnails]}
         zoom={{ ref: zoomRef, zoomInMultiplier: 10, scrollToZoom: true }}
@@ -831,7 +865,7 @@ function ProductPage() {
         slideshow={{ autoplay: false }}
         on={{
           click: () => {
-          
+
           },
         }}
       />}
@@ -851,93 +885,65 @@ function ProductPage() {
                     setOpenPhotoSwipe(true);
                   }}
                   alt={product?.naziv_artikla}
-                  src={Array.isArray(product?.slike) ? '/products/'+getImagePath(product, dimensionChosen)+'.webp' : imageSrc}
-                  onContextMenu={() => {return false}}
+                  src={Array.isArray(product?.slike) ? '/products/' + getImagePath(product, dimensionChosen) + '.webp' : imageSrc}
+                  onContextMenu={() => { return false }}
                 />
               </div>
 
               <div className='small-products-images divSmallProductImagesModelViseSlika'>
                 {product?.model_vise_slika === "TRUE" && Array.isArray(product.slike) &&
-                
-                product.slike.map( (imageCVS) => {
-                  console.log("IMAGECVS:", imageCVS)
-                return imageCVS.split(',').map((slike :string, index) => {
-                  return (
-                    <div
-                      key={slike+index}
-                      id={slike+index}
-                      data-index={index}
-                      className={`divProductImg ${
-                        index === dimensionChosen ? 'divProductImgSelectedThumbnail' : ''
-                      }`}
-                      onClick={(e) => {
-                        handleProductImgThumbnailSelected(e.target);
-                      }}
-                    >
-                      <LazyLoadImage
-                        effect='blur'
-                        alt={product?.naziv_artikla}
-                        src={
-                          '/products/' +
-                          getImagePath({...product, slike: slike} as Product, index) +
-                          '.webp'
-                        }
-                      />
-                    </div>
-                  );
-                })})
+
+                  product.slike.map((imageCVS) => {
+                    //console.log("IMAGECVS:", imageCVS)
+                    return imageCVS.split(',').map((slike: string, index) => {
+                      return (
+                        <div
+                          key={slike + index}
+                          id={slike + index}
+                          data-index={index}
+                          className={`divProductImg ${index === dimensionChosen ? 'divProductImgSelectedThumbnail' : ''
+                            }`}
+                          onClick={(e) => {
+                            handleProductImgThumbnailSelected(e.target);
+                          }}
+                        >
+                          <LazyLoadImage
+                            effect='blur'
+                            alt={product?.naziv_artikla}
+                            src={
+                              `${baseApi}/assets/products/` +
+                              getImagePath({ ...product, slike: slike } as Product, index) +
+                              '.webp'
+                            }
+                          />
+                        </div>
+                      );
+                    })
+                  })
                 }
-                
+
                 {/* not array and no comma seperated values => grab base img */}
                 {(product?.model_vise_slika !== "TRUE") && !Array.isArray(product?.slike) && product?.slike && !product?.slike?.includes(',') && (
-                  <div className='divProductImg divProductImgSelectedThumbnail' style={{  border:"2px solid #004d8c"}}>
+                  <div className='divProductImg divProductImgSelectedThumbnail' style={{ border: "2px solid #004d8c" }}>
                     <LazyLoadImage
                       effect='blur'
-                      onClick={() => {}}
+                      onClick={() => { }}
                       alt={product?.naziv_artikla}
                       src={imageSrc}
-                      onContextMenu={() => {return false}}
+                      onContextMenu={() => { return false }}
                     />
                   </div>
                 )}
-                 {/* not array and HAS comma seperated values => split ',' and get imagePaths */}
-                {product?.model_vise_slika !=="TRUE" && !Array.isArray(product?.slike) && product?.slike?.includes(',') && 
-                  product?.slike?.split(',').map((slike :string, index) => {
-                  return (
-                    <div
-                      key={slike+index}
-                      id={slike+index}
-                      data-index={index}
-                      className={`divProductImg ${
-                        index === dimensionChosen ? 'divProductImgSelectedThumbnail' : ''
-                      }`}
-                      onClick={(e) => {
-                        handleProductImgThumbnailSelected(e.target);
-                      }}
-                    >
-                      <LazyLoadImage
-                        effect='blur'
-                        alt={product?.naziv_artikla}
-                        src={
-                          '/products/' +
-                          getImagePath(product as Product, index) +
-                          '.webp'
-                        }
-                      />
-                    </div>
-                  );
-                })}
-                {/* HAS array of product pictures => map each one to a small img div and get img path*/}
-                {product?.model_vise_slika !== "TRUE" && Array.isArray(product.slike) &&
-                  product.slike.map((slike :string, index) => {
+                {/* not array and HAS comma seperated values => split ',' and get imagePaths */}
+                {product?.model_vise_slika !== "TRUE" && !Array.isArray(product?.slike) && product?.slike?.includes(',') &&
+                  product?.slike?.split(',').map((slike: string, index) => {
                     return (
                       <div
-                        key={slike+index}
-                        id={slike+index}
+                        key={slike + index}
+                        id={slike + index}
                         data-index={index}
-                        className={`divProductImg ${
-                          index === dimensionChosen ? 'divProductImgSelectedThumbnail' : ''
-                        }`}
+                        className={`divProductImg ${index === dimensionChosen ? 'divProductImgSelectedThumbnail' : ''
+                          }`}
                         onClick={(e) => {
                           handleProductImgThumbnailSelected(e.target);
                         }}
@@ -954,6 +960,32 @@ function ProductPage() {
                       </div>
                     );
                   })}
+                {/* HAS array of product pictures => map each one to a small img div and get img path*/}
+                {product?.model_vise_slika !== "TRUE" && Array.isArray(product.slike) &&
+                  product.slike.map((slike: string, index) => {
+                    return (
+                      <div
+                        key={slike + index}
+                        id={slike + index}
+                        data-index={index}
+                        className={`divProductImg ${index === dimensionChosen ? 'divProductImgSelectedThumbnail' : ''
+                          }`}
+                        onClick={(e) => {
+                          handleProductImgThumbnailSelected(e.target);
+                        }}
+                      >
+                        <LazyLoadImage
+                          effect='blur'
+                          alt={product?.naziv_artikla}
+                          src={
+                            `${baseApi}/assets/products/` +
+                            getImagePath(product as Product, index) +
+                            '.webp'
+                          }
+                        />
+                      </div>
+                    );
+                  })}
 
               </div>
             </div>
@@ -963,7 +995,7 @@ function ProductPage() {
               <div className='productPageDescription'>
                 <div className='productPageShareIconLabel'>
                   <Dropdown
-                    menu={{ items:  window.innerWidth > 1000 ? [...shareButtonItems.filter(el => el?.key !== '3')] : [...shareButtonItems] }}
+                    menu={{ items: window.innerWidth > 1000 ? [...shareButtonItems.filter(el => el?.key !== '3')] : [...shareButtonItems] }}
                     placement='bottom'
                     arrow
                     open={showShare}
@@ -983,8 +1015,8 @@ function ProductPage() {
                 </div>
                 <h1>{product.naziv_artikla}</h1>
 
-                <span className='singleProductPageDescription' style={{marginBottom: "20px"}}>
-                  Kategorija: <a style={{marginLeft:"5px"}} onClick={() => {handleShopRedirect()}}>{product?.kategorija_artikla}</a>
+                <span className='singleProductPageDescription' style={{ marginBottom: "20px" }}>
+                  Kategorija: <a style={{ marginLeft: "5px" }} onClick={() => { handleShopRedirect() }}>{product?.kategorija_artikla}</a>
                 </span>
                 <div>
                   <span
@@ -992,14 +1024,14 @@ function ProductPage() {
                     style={{
                       display:
 
-                       Array.isArray(product.meta_description) ? 'flex' : product?.meta_description?.length > 10
+                        Array.isArray(product.meta_description) ? 'flex' : product?.meta_description?.length > 10
                           ? 'flex'
                           : 'none',
                     }}
                   >
                     {Array.isArray(product.meta_description)
-                          ? product.meta_description[dimensionChosen]
-                          : product.meta_description}
+                      ? product.meta_description[dimensionChosen]
+                      : product.meta_description}
                   </span>
                   {product?.prosireni_opis?.length && (
                     <>
@@ -1010,15 +1042,15 @@ function ProductPage() {
                     className='singleProductPageDescription'
                     style={{
                       display:
-                      Array.isArray(product.prosireni_opis) || ( !Array.isArray(product.prosireni_opis) && product?.prosireni_opis?.length > 10) ? 'flex' : 'none',
+                        Array.isArray(product.prosireni_opis) || (!Array.isArray(product.prosireni_opis) && product?.prosireni_opis?.length > 10) ? 'flex' : 'none',
                     }}
                   >
-                     {Array.isArray(product.prosireni_opis)
-                          ? product.prosireni_opis[dimensionChosen]
-                          : product.prosireni_opis}
+                    {Array.isArray(product.prosireni_opis)
+                      ? product.prosireni_opis[dimensionChosen]
+                      : product.prosireni_opis}
                     {/* {product.prosireni_opis} */}
                   </span>
-                  <a className='aTagScrollToSpecifications' style={{cursor: "pointer"}} onClick={() => executeScroll()}>Saznaj više o proizvodu</a>
+                  <a className='aTagScrollToSpecifications' style={{ cursor: "pointer" }} onClick={() => executeScroll()}>Saznaj više o proizvodu</a>
                   <ul className='product__meta'>
                     <li className='product__meta-availability'>
                       Šifra artikla:
@@ -1035,8 +1067,8 @@ function ProductPage() {
                         : product.minimalno_pakovanje}
                     </li>
                     <li>Jedinica mere: {Array.isArray(product.jedinica_mere)
-                        ? product.jedinica_mere[dimensionChosen]
-                        : product.jedinica_mere}</li>
+                      ? product.jedinica_mere[dimensionChosen]
+                      : product.jedinica_mere}</li>
                     <li style={{ textAlign: 'right' }}>
                       Transportno pakovanje:{' '}
                       {Array.isArray(product.transportno_pakovanje)
@@ -1058,7 +1090,7 @@ function ProductPage() {
                         Model:
                       </label>
                       <Row>
-                      {product?.naziv_proizvoda_model &&  <Radio.Group
+                        {product?.naziv_proizvoda_model && <Radio.Group
                           onChange={(e) => setDimensionIndex(e)}
                           defaultValue={product.sifra_proizvoda.indexOf(window.location.hash.substring(1)) !== -1 ? product.sifra_proizvoda[dimensionChosen] : 0}
                           value={dimensionChosen}
@@ -1066,7 +1098,7 @@ function ProductPage() {
                           style={{ borderRadius: '0px !important' }}
                         >
                           {product.naziv_proizvoda_model &&
-                          Array.isArray(product.naziv_proizvoda_model) ? (
+                            Array.isArray(product.naziv_proizvoda_model) ? (
                             product.naziv_proizvoda_model.map(
                               (dimension, index) => {
                                 const longest = Math.max(...(product.naziv_proizvoda_model as Array<string>).map(el => el.length));
@@ -1078,15 +1110,15 @@ function ProductPage() {
                                     marginRight: '5px',
                                     marginBottom: '5px',
                                     backgroundColor: '#f0f0f0',
-                                    width: longest && longest > 20 ? 
-                                                                    "190px" 
-                                                                    : longest && longest > 15 ? 
-                                                                                              "189px" 
-                                                                                              : longest && longest > 10 ?
-                                                                                                                        "150px" 
-                                                                                                                        : longest && longest > 5 ?
-                                                                                                                                                  "120px"
-                                                                                                                                                  : "70px" 
+                                    width: longest && longest > 20 ?
+                                      "190px"
+                                      : longest && longest > 15 ?
+                                        "189px"
+                                        : longest && longest > 10 ?
+                                          "150px"
+                                          : longest && longest > 5 ?
+                                            "120px"
+                                            : "70px"
                                   }}
                                   value={index}
                                 >
@@ -1112,12 +1144,12 @@ function ProductPage() {
                       <br />
                     </>
                   )}
-              
+
                   <div
                     className='divAdditionalDescription'
                     style={{ borderTop: '0px' }}
                   >
-                  
+
                   </div>
 
                   <div className='divProductActionButtons'>
@@ -1131,7 +1163,7 @@ function ProductPage() {
                           setShowShipmentTip(false);
                         }}
                       >
-                        <div className='divProductActionQuantityText' style={{backgroundColor: showFirmTip ? "#004d8c" : ''}}>
+                        <div className='divProductActionQuantityText' style={{ backgroundColor: showFirmTip ? "#004d8c" : '' }}>
                           PORUČITE
                         </div>
                       </Button>
@@ -1157,16 +1189,17 @@ function ProductPage() {
                           setShowFirmTip(false);
                           setShowShipmentTip(false);
                         }}
-                        style={{fontSize: "16px"}}
+                        style={{ fontSize: "16px" }}
                       >
-                     <div className='divProductActionQuantityText' 
-                     style={{
-                      background: 'white',
-                      color: "#00AEEF", 
-                      whiteSpace: "normal", 
-                      wordBreak: "normal"}}>
-                      {/* showPersonTip ? "#004d8c" : '' */}
-                     Informacije za fizička lica
+                        <div className='divProductActionQuantityText'
+                          style={{
+                            background: 'white',
+                            color: "#00AEEF",
+                            whiteSpace: "normal",
+                            wordBreak: "normal"
+                          }}>
+                          {/* showPersonTip ? "#004d8c" : '' */}
+                          Informacije za fizička lica
                         </div>
                       </Button>
                       <div
@@ -1179,41 +1212,41 @@ function ProductPage() {
                         hidden={!showPersonTip || showFirmTip}
                       >
                         <ul>
-                          <li>Pozovite 060/0768-777 ili pošaljite mail 
-                            <a href="mailto:office@gromet.rs"> office@gromet.rs.</a> <br/>
+                          <li>Pozovite 060/0768-777 ili pošaljite mail
+                            <a href="mailto:office@gromet.rs"> office@gromet.rs.</a> <br />
                             Dobićete informaciju gde se nalaze naši partneri najbliži Vama kod kojih možete kupiti naše proizvode.</li>
                         </ul>
                       </div>
 
                     </div>
-                    <span 
-                     className='spanTroskoviIsporuke'
-                     onClick={() => {
+                    <span
+                      className='spanTroskoviIsporuke'
+                      onClick={() => {
                         setShowShipmentTip(() => !showShipmentTip);
                         setShowFirmTip(false);
                         setShowPersonTip(false);
-                     }} 
-                     >
+                      }}
+                    >
                       Troškovi isporuke
                     </span>
                     <div
-                        className={window.innerWidth > 900 ? 'divShowFirmTip spanShowShipmentTip' : "divShowFirmTip responsiveShipmentTip"}
-                        style={
-                          showShipmentTip
-                            ? { borderColor: '#9a9a9a', color: '#000' }
-                            : {}
-                        }
-                        hidden={!showShipmentTip || showFirmTip || showPersonTip}
-                      >
-                        <ul>
-                          <li>1. BESPLATNA DOSTAVA našim vozilom za porudžbine preko 20 000 dinara+pdv ili dođite lično po robu u neki od naših magacina.</li>
-                          <li>2. KURIRSKOM SLUŽBOM: <br/>
-                              -U našoj organizaciji-troškovi i način dostave zavise od gabarita i težine porudžbine. <br/>
-                              -U vašoj organizaciji-odaberite sami kurirsku službu za dostavu robe.<br/>
-                              Za detalje pozvati na 060/0768777
-                          </li>
-                        </ul>
-                      </div>
+                      className={window.innerWidth > 900 ? 'divShowFirmTip spanShowShipmentTip' : "divShowFirmTip responsiveShipmentTip"}
+                      style={
+                        showShipmentTip
+                          ? { borderColor: '#9a9a9a', color: '#000' }
+                          : {}
+                      }
+                      hidden={!showShipmentTip || showFirmTip || showPersonTip}
+                    >
+                      <ul>
+                        <li>1. BESPLATNA DOSTAVA našim vozilom za porudžbine preko 20 000 dinara+pdv ili dođite lično po robu u neki od naših magacina.</li>
+                        <li>2. KURIRSKOM SLUŽBOM: <br />
+                          -U našoj organizaciji-troškovi i način dostave zavise od gabarita i težine porudžbine. <br />
+                          -U vašoj organizaciji-odaberite sami kurirsku službu za dostavu robe.<br />
+                          Za detalje pozvati na 060/0768777
+                        </li>
+                      </ul>
+                    </div>
                   </div>
                   <div>
                   </div>
@@ -1232,7 +1265,7 @@ function ProductPage() {
                 </div>
               </div>
             </div>
-         
+
           </div>
           <div className='divProductTabsContainer' ref={myRef}>
             <Tabs defaultActiveKey='1' items={SpecifikacijeJSX} onChange={onChange} />
@@ -1253,7 +1286,7 @@ function ProductPage() {
               <div className='block-header__divider'></div>
               <>
                 <LeftOutlined id='btn-left' />
-                <RightOutlined id='btn-right'/>
+                <RightOutlined id='btn-right' />
               </>
             </div>
             <div className='divProductScrollContainer'>
@@ -1264,7 +1297,7 @@ function ProductPage() {
                     <ProductCard
                       key={index}
                       product={product as Product}
-                      picture={'/products/' + imagePath + '.webp'} //pictures[index].picture}
+                      picture={`${baseApi}/assets/products/` + imagePath + '.webp'} //pictures[index].picture}
                       hideSticker={true}
                     ></ProductCard>
                   );
@@ -1286,7 +1319,7 @@ function ProductPage() {
               <div className='block-header__divider'></div>
               <>
                 <LeftOutlined id='btn-left2' />
-                <RightOutlined id='btn-right2'/>
+                <RightOutlined id='btn-right2' />
               </>
             </div>
             <div className='divProductScrollContainer divProductScrollContainer2'>
@@ -1300,8 +1333,8 @@ function ProductPage() {
                       <ProductCard
                         key={index}
                         product={product as Product}
-                        picture={'/products/' + imagePath + '.webp'}
-                        // pictures[pictures.length - 4 - 1 - (index % 9)].picture
+                        picture={`${baseApi}/assets/products/` + imagePath + '.webp'}
+                      // pictures[pictures.length - 4 - 1 - (index % 9)].picture
                       ></ProductCard>
                     );
                   })}

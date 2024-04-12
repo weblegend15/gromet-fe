@@ -9,17 +9,38 @@ import { LazyLoadImage } from 'react-lazy-load-image-component';
 import { Product } from '../Content/AffiliateLayers/ProductPage';
 import { useBreadCrumbsUpdateContext } from '../Content/AffiliateLayers/Context/BreadCrumbsContext';
 import { getImagePath } from '../../hooks/helpers';
+import { baseApi } from '../../constants';
+import axios from 'axios';
 
 
 const { Meta } = Card;
+//let products=[{}];
+
+/*const fetchProducts = async () => {
+  try {
+    const token: string | null = localStorage.getItem('accessToken');
+    console.log("-----------TOKEN------------",token);
+    if (token) {
+      await axios.get(`${baseApi}/products/getProducts`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+      }).then(res => {
+        //products=res.data.data;
+      })
+        .catch(err => {
+
+        });
+    }
+  } catch (error) {
+
+    console.error('Error fetching products:', error);
+  }
+};*/
 
 function JsonView() {
   const navigate = useNavigate();
   const routeHistoryUpdate = useBreadCrumbsUpdateContext();
-
-  useEffect(() => {
-    routeHistoryUpdate(['Početna', 'Novo u ponudi']);
-  }, []);
 
   return (
     <div className="container">
@@ -70,7 +91,7 @@ function JsonView() {
                     cover={
                       <LazyLoadImage effect="blur"
                         alt={product?.naziv_artikla}
-                        src={'/products/' + imagePath + '.webp'}
+                        src={`${baseApi}/assets/products/` + imagePath + '.webp'}
                         // src={   
                         //   pictures.find((el: any) => el.name === product?.naziv_artikla)
                         //     ?.picture
