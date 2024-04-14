@@ -1,1 +1,1 @@
-export const baseApi = 'https://gromet-be-q173.onrender.com/';
+export const baseApi = 'https://gromet-be-q173.onrender.com';
