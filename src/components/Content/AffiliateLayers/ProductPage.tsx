@@ -880,7 +880,6 @@ function ProductPage() {
                   effect='blur'
                   id={'productShowcaseImage'}
                   onClick={() => {
-                    alert("Pressed");
                     hideBackToTop(true);
                     setOpenPhotoSwipe(true);
                   }}

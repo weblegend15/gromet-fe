@@ -1,1 +1,1 @@
-export const baseApi = 'https://bursting-loudly-duck.ngrok-free.app';
+export const baseApi = 'https://gromet-be-rimn.onrender.com';
