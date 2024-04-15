@@ -30,6 +30,7 @@ import { getImagePath } from '../../hooks/helpers';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import { categories, dates, href, latestNews, minuti_citanja, titles } from './Blog';
 import { baseApi } from '../../constants';
+import axios from 'axios';
 
 export const contentStyle: React.CSSProperties = {
   height: '100px',
@@ -39,6 +40,7 @@ export const contentStyle: React.CSSProperties = {
   backgroundColor: 'gray',
   position: 'relative',
 };
+
 
 
 function Home() {
@@ -70,67 +72,7 @@ function Home() {
       });
     }
   }, []);
-  const products = [{
-    "polje_id": "1",
-    "sifra_proizvoda": [
-        "DFM50E",
-        "DFM50B",
-        "JFM50B",
-        "FM50B"
-    ],
-    "naziv_artikla": "Fasadna mrežica BASIC plava",
-    "naziv_proizvoda_model": [
-        "4x4mm, EKO",
-        "4x4mm,  EKO LIGHT",
-        "4x4mm,  EKO (STANDARD)",
-        "5x5mm"
-    ],
-    "varijacije": [
-        "sifra_proizvoda",
-        "naziv_proizvoda_model",
-        "stiker"
-    ],
-    "meta_description": "Fasadna ili armaturna mrežica koristi se kod fasadnih izolacionih sistema  kako bi se osigurala čvršća veza termoizolacionih materijala.",
-    "prosireni_opis": "Staklena mrežica za malter ili stiropor  je laka i veoma čvrsta. Napravljena je od nezapaljivog materijala i zato se često koristi kod gipsarskih fasada. Izuzetno je postojana i otporna na hemijske uticaje i UV zrake. ",
-    "jedinica_mere": "m2",
-    "kategorija_artikla": "Fasadne mrežice",
-    "potkategorija": "Ostalo",
-    "potkategorija_lista": "/",
-    "minimalno_pakovanje": "50",
-    "transportno_pakovanje": "2000",
-    "zapremina": "/",
-    "kvadratura": "50m2",
-    "sirina": "1m",
-    "duzina": "50m",
-    "visina": "/",
-    "precnik": "/",
-    "debljina": "/",
-    "tezina": "/",
-    "sastav": "Alkali, fiberglass, organska materija ",
-    "boja": "Plava",
-    "stiker": [
-        "NOVO",
-        "/",
-        "/",
-        "/"
-    ],
-    "qr_kod": "https://gromet.rs/shop/1/",
-    "slike": "1-dfm50b-fasadna-mrezica-basic-plava",
-    "model_vise_slika": "FALSE",
-    "url": "/fasadna-mrezica-basic-plava",
-    "tehnicki_crtez": "/",
-    "tip_otpornosti": "Alkalna, hemijska, mehanička, vodootpornost, ne gori",
-    "garancija": "/",
-    "rok_trajanja": "/",
-    "sertifikat": "/",
-    "mesto_i_nacin_skladistenja": " Na suvom mestu, zaštiti od direktnog zračenja sunca ",
-    "dimenzije_pakovanja": "/",
-    "prateca_oprema_dodaci": "Gleterica",
-    "dodatne_napomene": "/",
-    "mesta_primene": "/",
-    "nacin_ugradnje": "/"
-}];
-  const [productsList, setProductList] = useState([...products]);
+  const [productsList, setProductList] = useState<any[]>([]);//useState([]);//useState([...products]);
 
    // cookies modal
    const [showHowToScanModal, setShowHowToScanModal] = useState(false);
@@ -142,6 +84,18 @@ function Home() {
   const showHowToQRScan = () => {
     setShowHowToScanModal(true)
   }
+
+  useEffect(() => {
+    let token = localStorage.getItem('accessToken');
+    axios.get(`${baseApi}/products/getProducts`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+    }).then(res => {
+      if (res.data.data)
+        setProductList(res.data.data);
+    });
+  }, []);
 
   return (
     <div className="divHome">
