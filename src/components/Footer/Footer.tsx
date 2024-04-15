@@ -28,7 +28,7 @@ function ContactUs() {
   const accessToken = localStorage.getItem('accessToken');
   const onLogout = () => {
     localStorage.setItem('accessToken', '');
-    window.location.href = '/';
+    window.location.href = '/account/login';
   }
   return (
     <div className="">

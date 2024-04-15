@@ -1,5 +1,5 @@
 import './App.css';
-import { Navigate } from 'react-router-dom';
+import { Navigate, redirect } from 'react-router-dom';
 import Navigation from './components/Nav/Navigation';
 import React, { useEffect, useState } from 'react';
 import BreadCrumbs from './components/Content/BreadCrumbs/BreadCrumbs';
@@ -34,6 +34,8 @@ import { Helmet } from "react-helmet";
 import NotFound404 from './components/ErrorPages/404Page';
 import Login from './components/Account/Login';
 import Register from './components/Account/Register';
+
+import AuthProvider from './providers/AuthProvider';
 
 const tagManagerArgs = {
     gtmId: 'G-Y8ERRGCNMD'
@@ -200,6 +202,8 @@ function App() {
 
     }, [])
 
+
+    let localToken = localStorage.getItem("accessToken");
     return (
         <React.Fragment>
             <QueryClientProvider client={queryClient}>
@@ -334,8 +338,8 @@ function App() {
                                 <AffiliateContextProvider>
                                     <Router>
                                         <Routes>
-                                            {/*public */}
-                                            <Route path="/" element={<Home />}></Route>
+                                            { !! localToken ? 
+                                            <><Route path="/" element={<Home />}></Route>
                                             <Route path="/pocetna" element={<Home />}></Route>
                                             <Route path="/proizvodi" element={<EditAffiliateLayer />}></Route>
                                             <Route path="/novo" element={<JsonView />}></Route>
@@ -347,7 +351,9 @@ function App() {
                                             <Route path="/onama" element={<About />}></Route>
                                             <Route path="/kontakt" element={<Contact />}></Route>
                                             <Route path="/pravila" element={<Terms />}></Route>
-                                            <Route path="/*" element={<NotFound404 />} status={404}></Route>
+                                            <Route path="/*" element={<NotFound404 />} status={404}></Route></> : <></>
+                                            }
+
                                             <Route path="/account/login" element={<Login setAccount={setAccount} />}></Route>
                                             <Route path="/account/signup" element={<Register setAccount={setAccount} />}></Route>
 
@@ -359,7 +365,7 @@ function App() {
                                                 null
                                             )} */}
 
-
+                                            {!! localToken ? <></> : <Route path = "/*" element={<Navigate to="/account/login"></Navigate>}></Route>}
                                         </Routes>
                                     </Router>
                                 </AffiliateContextProvider>

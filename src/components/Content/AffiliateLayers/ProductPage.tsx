@@ -248,10 +248,6 @@ function ProductPage() {
       const id = decodeURI(window.location.pathname.substring(indexSlash + 1 + 'proizvod'.length - 1));
       const product = productlist.find((product : Product) => product?.url === id);
 
-      console.log("-----------PRODUCTSList---------", productsList);
-      console.log("-----------PRODUCTSlist---------", productlist);
-      console.log('product:', product, id, indexSlash, productsList, productsList.findIndex(product => product.url === id));
-
 
       if (product) {
         document.title = product.naziv_artikla;
