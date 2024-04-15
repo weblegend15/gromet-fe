@@ -231,7 +231,7 @@ function App() {
 
                         <Modal
                             className={window.innerWidth > 900 && !isOptionsOpen ? "modalPositionInitial" : "modalPositionOptions"}
-                            open={isModalOpen}
+                            open={isModalOpen && !! localToken}
                             closable={false}
                             onOk={handleOk}
                             onCancel={handleCancel}
