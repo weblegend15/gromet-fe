@@ -1051,8 +1051,14 @@ function ProductPage() {
                     </button>
                   </Dropdown>
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                  <h1>{product.naziv_artikla}</h1>
+                <h1>{product.naziv_artikla}</h1>
+                <span className='singleProductPageDescription' style={{ marginBottom: "20px" }}>
+                  Kategorija: <a style={{ marginLeft: "5px" }} onClick={() => { handleShopRedirect() }}>{product?.kategorija_artikla}</a>
+                </span>
+                <span className='singleProductPageDescription' style={{ marginBottom: "20px" }}>
+                  Status: 
+                  <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginLeft:'8px' }}>
+                  
                   {product.count === 0 && localStorage.getItem("currentUser") === "USER" &&(
                     <img src="https://www.freeiconspng.com/uploads/red-circle-icon-1.png" width={15} alt="Red Circle" />
                   )}
@@ -1063,8 +1069,6 @@ function ProductPage() {
                     <img src="https://www.freeiconspng.com/uploads/green-circle-icon-14.png" width={15} alt="Green Circle" />
                   )}
                   </div>
-                <span className='singleProductPageDescription' style={{ marginBottom: "20px" }}>
-                  Kategorija: <a style={{ marginLeft: "5px" }} onClick={() => { handleShopRedirect() }}>{product?.kategorija_artikla}</a>
                 </span>
                 <div>
                   <span

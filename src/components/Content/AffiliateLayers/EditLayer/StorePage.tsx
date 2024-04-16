@@ -128,23 +128,11 @@ function StorePage() {
 
   const defaultNumPerPage = window.innerWidth > 900 ? 9 : 15;
   const [numEachPage, setNumEachPage] = useState(defaultNumPerPage);
-  const [productsList, setProductList] = useState<any[]>([]);//useState([]);//useState([...products]);
+  const [productsList, setProductsList] = useState<any[]>([]);//useState([]);//useState([...products]);
   const [minPage, setMinPage] = useState(0);
   const [maxPage, setMaxPage] = useState(numEachPage);
   const [defaultPaginationPage, setDefaultPaginationPage] = useState(1);
 
-
-  useEffect(() => {
-    let token = localStorage.getItem('accessToken');
-    axios.get(`${baseApi}/products/getProducts`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      },
-    }).then(res => {
-      if (res.data.data)
-        setProductList(res.data.data);
-    });
-  }, []);
 
 
 
@@ -182,6 +170,19 @@ function StorePage() {
   const [maxPrice, setMaxPrice] = useState<number>(1000);
   const [loadingProducts, setLoadingProducts] = useState<boolean>(false);
 
+
+  useEffect(() => {
+    let token = localStorage.getItem('accessToken');
+    axios.get(`${baseApi}/products/getProducts`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+    }).then(res => {
+      if (res.data.data)
+        setProductsList(res.data.data);
+        setFilteredProducts(res.data.data);
+    });
+  }, []);
 
   const filterProducts = (filter: any, filterName: string, affectSubcategories :boolean) => {
     const panel = document.getElementById(`${filter.id}`)?.parentNode;
