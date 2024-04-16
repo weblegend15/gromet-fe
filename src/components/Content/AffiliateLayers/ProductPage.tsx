@@ -78,6 +78,7 @@ export interface Product {
   slike: string | Array<string>;
   url: string;
   model_vise_slika: string;
+  count:number;
 }
 
 interface DataType {
@@ -89,6 +90,8 @@ interface DataType {
   actions: JSX.Element;
 }
 
+
+
 const startingHistory = [
   'L1NDA Planner',
   'Domain Settings',
@@ -99,7 +102,7 @@ type DataIndex = keyof DataType;
 
 function ProductPage() {
   const routeHistoryUpdate = useBreadCrumbsUpdateContext();
-
+  
   const setDimensionIndex = (e: any) => {
     if (product.dimenzije_pakovanja) {
       const index = Number(e.target.id);
@@ -137,7 +140,7 @@ function ProductPage() {
   const [product, setProduct] = useState<Product>({} as Product);
 
   const myRef = useRef<HTMLDivElement>(null);
-
+  let currentproductcount = product.count;
   const executeScroll = () => {
     //console.log("first", myRef?.current)
     if (myRef?.current) {
@@ -171,6 +174,28 @@ function ProductPage() {
       console.error('Error fetching products:', error);
     }
   };
+
+  const fetchProductData = async (count:number) => {
+    try {
+      const token: string | null = localStorage.getItem('accessToken');
+      if (token) {
+        return await axios.post(`${baseApi}/products/count`, {count:count, id:product.polje_id},{
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }).then(res => {
+          return res.data.data;
+        })
+          .catch(err => {
+
+          });
+      }
+    } catch (error) {
+
+      console.error('Error fetching products:', error);
+    }
+  }
+
   useEffect(() => {
 
     window.scrollTo(0, 0);
@@ -820,6 +845,24 @@ function ProductPage() {
       window.location.href = `/proizvodi#filteri=${product?.kategorija_artikla}&stranica=1`
     }, 300);
   }
+  
+  const setCurrentProductCount = (CurrentCount:number)=>{
+    fetchProductData(CurrentCount);
+    currentproductcount = CurrentCount;
+  }
+
+  const setCount = (isPlus: boolean)=>{
+    if(isPlus){
+      console.log("Willing Product Count",product.count+1);
+      setCurrentProductCount(product.count+1);
+    }else{
+      if(product.count-1>0)
+        console.log("Willing Product Count",product.count-1)
+        setCurrentProductCount(product.count-1);
+    }
+    
+  }
+  
 
   return (
     <div className='singleProductPageContainer container'>
@@ -1008,8 +1051,18 @@ function ProductPage() {
                     </button>
                   </Dropdown>
                 </div>
-                <h1>{product.naziv_artikla}</h1>
-
+                <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                  <h1>{product.naziv_artikla}</h1>
+                  {product.count === 0 && localStorage.getItem("currentUser") === "USER" &&(
+                    <img src="https://www.freeiconspng.com/uploads/red-circle-icon-1.png" width={15} alt="Red Circle" />
+                  )}
+                  {product.count > 0 && product.count <= 5 && localStorage.getItem("currentUser") === "USER" &&(
+                    <img src="https://www.freeiconspng.com/uploads/purple-circle-icon-5.png" width={15} alt="Purple Circle" />
+                  )}
+                  {product.count > 5 && localStorage.getItem("currentUser") === "USER" &&(
+                    <img src="https://www.freeiconspng.com/uploads/green-circle-icon-14.png" width={15} alt="Green Circle" />
+                  )}
+                  </div>
                 <span className='singleProductPageDescription' style={{ marginBottom: "20px" }}>
                   Kategorija: <a style={{ marginLeft: "5px" }} onClick={() => { handleShopRedirect() }}>{product?.kategorija_artikla}</a>
                 </span>
@@ -1070,6 +1123,16 @@ function ProductPage() {
                         ? product.transportno_pakovanje[dimensionChosen]
                         : product.transportno_pakovanje}
                     </li>
+                    {localStorage.getItem('currentUser')==="ADMIN" && (
+                      <li style={{ textAlign: 'right' }}>
+                      Count:{''}
+                      <button className='minusButton'
+                      onClick={() => setCount(false)} >-</button>
+                      {currentproductcount}
+                      <button className='plusButton'
+                      onClick={() => setCount(true)} >+</button>
+                    </li>)}
+                    
                   </ul>
                   {product?.naziv_proizvoda_model !== '/' && (
                     <>

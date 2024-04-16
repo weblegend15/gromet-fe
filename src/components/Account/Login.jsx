@@ -69,6 +69,7 @@ const Login = ({ setAccount }) => {
             alert("You are not verified yet. Verification email has been sent. Please login again after verification.");
           } else if (res.status === 200) {
             localStorage.setItem('accessToken', res.data.accessToken);
+            localStorage.setItem('currentUser', res.data.data.roles[0]);
             navigate("/", { replace: true });
             setAccount(false);
           }
