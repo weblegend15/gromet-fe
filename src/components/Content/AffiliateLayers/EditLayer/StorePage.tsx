@@ -188,7 +188,7 @@ function StorePage() {
     const panel = document.getElementById(`${filter.id}`)?.parentNode;
     let activeFilters: Array<string> = [];
 
-    console.log(`${filter.id}:`, panel);
+    // console.log(`${filter.id}:`, panel);
 
     if (panel) {
       panel.childNodes.forEach((filterDiv: any, index) => {
@@ -221,7 +221,7 @@ function StorePage() {
       });
     }
     // localStorage.setItem('activeFilters', activeFilters.toString());
-    console.log('active filters', activeFilters, filter);
+    // console.log('active filters', activeFilters, filter);
     const finalList : Array<any> = filterState(activeFilters, filterName, filter);
     
     const mockStickerId = "chbxNovo";
@@ -236,10 +236,10 @@ function StorePage() {
     window.location.hash = '';
     const pageLocalStorage = localStorage.getItem('PageChange');
     const pageNumber = pageLocalStorage && eventTarget === undefined ? Number(pageLocalStorage) : 1;
-    console.log(pageNumber, "pnmbr", activeFilters,filterName, eventTarget )
+    // console.log(pageNumber, "pnmbr", activeFilters,filterName, eventTarget )
     handlePageChange(pageNumber);
     if (activeFilters.length > 0) {
-      console.log("filterState active filters in hash = ", activeFilters, pageNumber);
+      //console.log("filterState active filters in hash = ", activeFilters, pageNumber);
      
       window.location.hash = "filteri=" + activeFilters.toString();
       setTimeout(() => {
@@ -291,7 +291,7 @@ function StorePage() {
     } else {
       currentList = [...productsList];
     }
-    console.log('filters done', currentList);
+    // console.log('filters done', currentList);
     return currentList;
   };
 
@@ -301,7 +301,7 @@ function StorePage() {
 
       const div = document.getElementById(categoryName);
       const hasSubcategories = !div?.classList.contains('ant-collapse-no-arrow');
-      console.log("div and hasSubcategories", div, hasSubcategories);
+      // console.log("div and hasSubcategories", div, hasSubcategories);
       
       // const categoriesList = productsList.filter(p => p.kategorija_artikla === categoryName ).map(p => p.potkategorija)
       // const subcategories = Array.from(new Set(categoriesList))//.map(el => "-"+el.toLowerCase());
@@ -319,11 +319,11 @@ function StorePage() {
         })
        
 
-        console.log("yeey: "+categoryName, activeSubcategories);
+        // console.log("yeey: "+categoryName, activeSubcategories);
       }
     })
 
-    console.log("ready to push storage", activeFilters);
+    // console.log("ready to push storage", activeFilters);
     localStorage.setItem('potkategorije', activeFilters.toString());
     // window.location.hash = "filteri=" + activeFilters.toString();
   }
@@ -331,30 +331,30 @@ function StorePage() {
 
   //on change for subcategory clicked
   const filterProductsBySubcategory = (filter: any) => {
-    console.log(filter, 'asds');
+    // console.log(filter, 'asds');
     const parentCategory = filter.dataset.kategorija;
     const panel = document.getElementById(`${parentCategory}`);
 
     if (panel) {
       const activeSubCategories :string[] = getActiveSubcategories(panel);
-      console.log("filetr klliknut", filter, "panel kategorija", panel, activeSubCategories,activeSubCategories.length);
+      // console.log("filetr klliknut", filter, "panel kategorija", panel, activeSubCategories,activeSubCategories.length);
       if(activeSubCategories.length === 0 ){
         // make uncheck panel function from this code below
        const panelInput = (panel.childNodes[0].childNodes[1] //.childNodes[0].childNodes[0]
         .childNodes[0] as HTMLInputElement);
        panelInput.checked = false;
-      console.log("panelINput", panelInput);
+      // console.log("panelINput", panelInput);
        filterProducts({ id: 'Fasadne mrežice' }, 'Kategorija', false);
         return;
       }
       if(activeSubCategories.length === 1 ){
         // make uncheck panel function from this code below
-        console.log("yo");
+        // console.log("yo");
        const panelInput = (panel.childNodes[0].childNodes[1] //.childNodes[0].childNodes[0]
         .childNodes[0] as HTMLInputElement);
-        console.log("chekirano");
+        // console.log("chekirano");
        panelInput.checked = true;
-      console.log("panelINput", panelInput);
+      // console.log("panelINput", panelInput);
        filterProducts({ id: 'Fasadne mrežice' }, 'Kategorija', false);
        
       }
@@ -578,7 +578,7 @@ function StorePage() {
       );
       setFilteredProducts(filterResult);
     } else {
-      console.log("else grana");
+      // console.log("else grana");
       // dummy filter to grab all active categories and filter the products;
       filterProducts({ id: 'Fasadne mrežice' }, 'Kategorija', false);
     }
@@ -589,13 +589,13 @@ function StorePage() {
 
     let filterResult = listForFiltering;
     const panel = document.getElementById(`${filter.id}`)?.parentNode;
-    console.log('checkStickerscheckStickers', panel,filter,  listForFiltering);
+    // console.log('checkStickerscheckStickers', panel,filter,  listForFiltering);
     let activeFilters: Array<string> = [];
     if (panel) {
       panel.childNodes.forEach((stickerDiv: any, index) => {
         let inputValue;
         inputValue = stickerDiv.childNodes[0].childNodes[0].childNodes[0] as HTMLInputElement; //.childNodes[0].childNodes[0]
-        console.log('stickerDiv', stickerDiv, inputValue);
+        // console.log('stickerDiv', stickerDiv, inputValue);
 
         if (inputValue && inputValue.checked) {
           activeFilters.push(inputValue.id.split('x')[1] as string);
@@ -616,12 +616,12 @@ function StorePage() {
       
       );
     
-      console.log(
-        'checkFiltersSTICKERS',
-        activeFilters,
-        listForFiltering,
-        filterResult
-      );
+      // console.log(
+      //   'checkFiltersSTICKERS',
+      //   activeFilters,
+      //   listForFiltering,
+      //   filterResult
+      // );
     }
     return filterResult;
 }
@@ -1142,8 +1142,6 @@ function StorePage() {
                 .slice(minPage, maxPage)
                 .map((product, index) => {
                   const imagePath = getImagePath(product as Product);
-
-                  console.log(`/proizvod${product?.url}`);
 
                   return (
                     <a style={{ position: 'relative' }} href={`/proizvod${product?.url}`}>

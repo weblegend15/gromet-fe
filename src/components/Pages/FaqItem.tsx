@@ -11,7 +11,7 @@ function FaqItem({ title, text, activeKey, index }: { title: string; text: strin
     console.log(key);
     // activeKey = key;
   };
-  console.log("active key:", activeKey, title, activeKey === '-1')
+  // console.log("active key:", activeKey, title, activeKey === '-1')
   return (
     <div className="faqItemCollapseContainer">
       <Collapse

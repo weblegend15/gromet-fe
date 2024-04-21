@@ -40,6 +40,7 @@ import axios, { AxiosResponse } from 'axios';
 
 
 export interface Product {
+  _id: string;
   polje_id: string;
   sifra_proizvoda: string | Array<string>;
   naziv_artikla: string;
@@ -78,7 +79,7 @@ export interface Product {
   slike: string | Array<string>;
   url: string;
   model_vise_slika: string;
-  count:number;
+  count: number;
 }
 
 interface DataType {
@@ -102,7 +103,7 @@ type DataIndex = keyof DataType;
 
 function ProductPage() {
   const routeHistoryUpdate = useBreadCrumbsUpdateContext();
-  
+
   const setDimensionIndex = (e: any) => {
     if (product.dimenzije_pakovanja) {
       const index = Number(e.target.id);
@@ -162,8 +163,6 @@ function ProductPage() {
           },
         }).then(res => {
           return res.data.data;
-          console.log("------------FETCHIED DATA------");
-          console.log(res.data.data);
         })
           .catch(err => {
 
@@ -174,27 +173,6 @@ function ProductPage() {
       console.error('Error fetching products:', error);
     }
   };
-
-  const fetchProductData = async (count:number) => {
-    try {
-      const token: string | null = localStorage.getItem('accessToken');
-      if (token) {
-        return await axios.post(`${baseApi}/products/count`, {count:count, id:product.polje_id},{
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }).then(res => {
-          return res.data.data;
-        })
-          .catch(err => {
-
-          });
-      }
-    } catch (error) {
-
-      console.error('Error fetching products:', error);
-    }
-  }
 
   useEffect(() => {
 
@@ -271,7 +249,7 @@ function ProductPage() {
 
       const indexSlash = window.location.pathname.lastIndexOf('proizvod/');
       const id = decodeURI(window.location.pathname.substring(indexSlash + 1 + 'proizvod'.length - 1));
-      const product = productlist.find((product : Product) => product?.url === id);
+      const product = productlist.find((product: Product) => product?.url === id);
 
 
       if (product) {
@@ -343,7 +321,7 @@ function ProductPage() {
   const zoomImagePath = getImagePath(product as Product);
 
   const imagePath = getImagePath(product as Product);
-  
+
   const imageSrc = `${baseApi}/assets/products/` + imagePath + '.webp';
 
   const handleProductImgThumbnailSelected = (e: any) => {
@@ -845,24 +823,6 @@ function ProductPage() {
       window.location.href = `/proizvodi#filteri=${product?.kategorija_artikla}&stranica=1`
     }, 300);
   }
-  
-  const setCurrentProductCount = (CurrentCount:number)=>{
-    fetchProductData(CurrentCount);
-    currentproductcount = CurrentCount;
-  }
-
-  const setCount = (isPlus: boolean)=>{
-    if(isPlus){
-      console.log("Willing Product Count",product.count+1);
-      setCurrentProductCount(product.count+1);
-    }else{
-      if(product.count-1>0)
-        console.log("Willing Product Count",product.count-1)
-        setCurrentProductCount(product.count-1);
-    }
-    
-  }
-  
 
   return (
     <div className='singleProductPageContainer container'>
@@ -1055,20 +1015,34 @@ function ProductPage() {
                 <span className='singleProductPageDescription' style={{ marginBottom: "20px" }}>
                   Kategorija: <a style={{ marginLeft: "5px" }} onClick={() => { handleShopRedirect() }}>{product?.kategorija_artikla}</a>
                 </span>
+
                 <span className='singleProductPageDescription' style={{ marginBottom: "20px" }}>
-                  Status: 
-                  <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginLeft:'8px' }}>
-                  
-                  {product.count === 0 && localStorage.getItem("currentUser") === "USER" &&(
-                    <img src="https://www.freeiconspng.com/uploads/red-circle-icon-1.png" width={15} alt="Red Circle" />
-                  )}
-                  {product.count > 0 && product.count <= 5 && localStorage.getItem("currentUser") === "USER" &&(
-                    <img src="https://www.freeiconspng.com/uploads/purple-circle-icon-5.png" width={15} alt="Purple Circle" />
-                  )}
-                  {product.count > 5 && localStorage.getItem("currentUser") === "USER" &&(
-                    <img src="https://www.freeiconspng.com/uploads/green-circle-icon-14.png" width={15} alt="Green Circle" />
-                  )}
-                  </div>
+                  {localStorage.getItem("currentUser") === "USER" &&
+                    (
+                      <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                        Status:
+                        <div style={{ marginLeft: '8px', alignItems: 'center' }}>
+                          {product.count === 0 && (
+                            <img src="https://www.freeiconspng.com/uploads/red-circle-icon-1.png" width={15} alt="Red Circle" />
+                          )}
+                          {product.count > 0 && (
+                            <img src="https://www.freeiconspng.com/uploads/purple-circle-icon-5.png" width={15} alt="Purple Circle" />
+                          )}
+                          {product.count > 5 && (
+                            <img src="https://www.freeiconspng.com/uploads/green-circle-icon-14.png" width={15} alt="Green Circle" />
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  {localStorage.getItem("currentUser") === "ADMIN" &&
+                    (
+                      <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                        Računati:
+                        <div style={{ marginLeft: '8px', alignItems: 'center' }}>
+                          {currentproductcount}
+                        </div>
+                      </div>
+                    )}
                 </span>
                 <div>
                   <span
@@ -1127,16 +1101,7 @@ function ProductPage() {
                         ? product.transportno_pakovanje[dimensionChosen]
                         : product.transportno_pakovanje}
                     </li>
-                    {localStorage.getItem('currentUser')==="ADMIN" && (
-                      <li style={{ textAlign: 'right' }}>
-                      Count:{''}
-                      <button className='minusButton'
-                      onClick={() => setCount(false)} >-</button>
-                      {currentproductcount}
-                      <button className='plusButton'
-                      onClick={() => setCount(true)} >+</button>
-                    </li>)}
-                    
+
                   </ul>
                   {product?.naziv_proizvoda_model !== '/' && (
                     <>
@@ -1217,18 +1182,33 @@ function ProductPage() {
                   <div className='divProductActionButtons'>
                     <label className='labelHowToOrder'>Za pravna lica</label>
                     <div className='divHowToOrderButtons'>
-                      <Button
-                        className='divProductActionQuantity'
-                        onClick={() => {
-                          setShowFirmTip(() => !showFirmTip);
-                          setShowPersonTip(false);
-                          setShowShipmentTip(false);
-                        }}
-                      >
-                        <div className='divProductActionQuantityText' style={{ backgroundColor: showFirmTip ? "#004d8c" : '' }}>
-                          PORUČITE
-                        </div>
-                      </Button>
+                      {localStorage.getItem("currentUser") === "USER" && (
+                        <Button
+                          className='divProductActionQuantity'
+                          onClick={() => {
+                            setShowFirmTip(() => !showFirmTip);
+                            setShowPersonTip(false);
+                            setShowShipmentTip(false);
+                          }}
+                        >
+                          <div className='divProductActionQuantityText' style={{ backgroundColor: showFirmTip ? "#004d8c" : '' }}>
+                            PORUČITE
+                          </div>
+                        </Button>)}
+
+                      {localStorage.getItem("currentUser") === "ADMIN" && (
+                        <Button
+                          className='divProductActionQuantity'
+                          onClick={() => {
+                            window.location.href=`/proizvod/edit${product.url}`
+                          }}
+                        >
+                          <div className='divProductActionQuantityText' style={{ backgroundColor: showFirmTip ? "#004d8c" : '' }}>
+                            EDIT
+                          </div>
+                        </Button>
+
+                      )}
 
                       <div
                         className='divShowFirmTip divResponsiveFirmTip'
@@ -1264,6 +1244,50 @@ function ProductPage() {
                           Informacije za fizička lica
                         </div>
                       </Button>
+                      {localStorage.getItem("currentUser") === "ADMIN" && (
+                        <Button
+                          className='divProductActionQuantity'
+                          onClick={() => {
+                            console.log(product);
+                            try {
+                              const token: string | null = localStorage.getItem('accessToken');
+                              if (token) {
+                                const header = {
+                                  headers: {
+                                    Authorization: `Bearer ${token}`,
+                                  }
+                                };
+
+                                return axios.post(`${baseApi}/products/deleteProduct`, { id: product._id }, header).then(res => {
+                                  alert("Deleted Successfully");
+                                  const fullUrl: string = window.location.href;
+                                  console.log(fullUrl);
+                                  const indexSlash: number = fullUrl.lastIndexOf('proizvod/');
+                                  console.log(indexSlash);
+                                  if (indexSlash !== -1) {
+                                    const baseUrl: string = fullUrl.substring(0, indexSlash + 'proizvod'.length);
+                                    window.location.href = baseUrl + 'i/';
+                                  }
+
+                                  return res.data.data;
+                                })
+                                  .catch(err => {
+
+                                  });
+
+
+                              }
+                            }
+                            catch (error) {
+
+                              console.error('Error create new product:', error);
+                            }
+                          }}
+                        >
+                          <div className='divProductActionQuantityText' style={{ backgroundColor: showFirmTip ? "#004d8c" : '' }}>
+                            DELETE
+                          </div>
+                        </Button>)}
                       <div
                         className='divShowFirmTip divShowPhysicalPersonTip'
                         style={

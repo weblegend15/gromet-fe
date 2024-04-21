@@ -241,9 +241,7 @@ function HelpFAQMobile() {
       }
       const item = query.get('p');
       const number = Number(item);
-      console.log('p', number, item);
       if(number && !Number.isNaN(number)){
-        console.log('p2', number, item);
         setItemShown(number);
       }else{
         setItemShown(0);

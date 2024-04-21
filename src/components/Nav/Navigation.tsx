@@ -31,6 +31,7 @@ const navLinks = [
   { text: 'O nama', href: '/onama' },
   { text: 'Pravila', href: '/pravila' },
   { text: 'Kontakt', href: '/kontakt' },
+  { text: 'Dućan', href: '/ducan' },
 ];
 
 function Navigation() {
@@ -203,7 +204,9 @@ function Navigation() {
                 </a>
               </div>
 
-              {navLinks.map(({ text, href }) => (
+              {navLinks.map(({ text, href }) => {
+                if (localStorage.getItem("currentUser") === "USER" && text == 'Dućan') return <></>;
+                return (
                 <div
                   key={text}
                   className='navigation navigationItemLink'
@@ -216,7 +219,7 @@ function Navigation() {
                     {text}
                   </a>
                 </div>
-              ))}
+              )})}
 
 
             </div>

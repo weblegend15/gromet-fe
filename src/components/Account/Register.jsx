@@ -84,7 +84,6 @@ const Register = ({ setAccount }) => {
     setFormErrors(errors);
 
     if (Object.keys(errors).length === 0) {
-      console.log(user.username, user.email, user.password);
       axios
         .post(`${baseApi}/account/signup`, { username: user.username, email: user.email, password: user.password })
         .then((res) => {

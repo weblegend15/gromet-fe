@@ -242,12 +242,9 @@ function Help() {
       }
       const item = query.get('p');
       const number = Number(item);
-      console.log('p', number, item);
       if(number && !Number.isNaN(number)){
-        console.log('p2', number, item);
         setItemShown(number);
       }else{
-        console.log('p2 else', number, item);
         setItemShown(-1);
       }
       setTimeout(() => {

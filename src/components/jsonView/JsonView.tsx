@@ -21,7 +21,6 @@ function JsonView() {
 
   useEffect(() => {
     const token: string | null = localStorage.getItem('accessToken');
-    console.log("-----------TOKEN------------", token);
     if (token) {
       axios.get(`${baseApi}/products/getProducts`, {
         headers: {
@@ -51,7 +50,7 @@ function JsonView() {
           <div className="divProductStoreContainer container jsonViewContainer" style={{ marginLeft: "0px !important" }}>
             {products.filter((product: any) => product?.stiker.includes("NOVO") || Array.from(product?.stiker).includes("NOVO")).map((product: any, index: number) => {
               const stickerIndex = Array.from(product?.stiker).indexOf("NOVO");
-              console.log("aaa", stickerIndex, product.naziv_artikla)
+              // console.log("aaa", stickerIndex, product.naziv_artikla)
               const imagePath = getImagePath(product as Product, stickerIndex === -1 ? undefined : stickerIndex);
               return (
                 <div style={{ position: 'relative' }}>

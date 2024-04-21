@@ -7,6 +7,8 @@ import { BreadCrumbsContextProvider } from './components/Content/AffiliateLayers
 import { QueryClient, QueryClientProvider } from 'react-query';
 import './components/Content/ContentContainer.css';
 import AffiliateLayers from './components/Content/AffiliateLayers/ProductPage';
+import AffiliateLayersEdit from './components/Content/AffiliateLayers/ProductPageEdit';
+
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import EditAffiliateLayer from './components/Content/AffiliateLayers/EditLayer/StorePage';
 import { AffiliateContextProvider } from './components/Content/AffiliateLayers/Context/AffiliateContext';
@@ -18,6 +20,7 @@ import Contact from './components/Pages/Contact';
 import Footer from './components/Footer/Footer';
 import Home from './components/Pages/Home';
 import JsonView from './components/jsonView/JsonView';
+import ShopView from './components/Shop/ShopView';
 import { Modal, Button, Collapse, Checkbox } from 'antd';
 import { UpOutlined, PlusOutlined, MinusOutlined } from '@ant-design/icons';
 import HelpPageRouterComponent from './components/Pages/HelpPageRouterComponent';
@@ -34,8 +37,6 @@ import { Helmet } from "react-helmet";
 import NotFound404 from './components/ErrorPages/404Page';
 import Login from './components/Account/Login';
 import Register from './components/Account/Register';
-
-import AuthProvider from './providers/AuthProvider';
 
 const tagManagerArgs = {
     gtmId: 'G-Y8ERRGCNMD'
@@ -74,84 +75,23 @@ function App() {
 
     useEffect(() => {
         const interval = setInterval(() => {
-            
+
             const imgs = document.querySelectorAll('img');
             imgs.forEach((img) => img.addEventListener('contextmenu', (e) => { e.preventDefault() }))
             if (interval) {
 
-                
+
                 clearInterval(interval);
             }
         }, 2000);
         const now = new Date(Date.now());
         const diff = moment().diff("2023-08-15", "days");
-        //console.log("first dateeee", now, Date.now(), diff);
         const app = document.querySelector("body");
         if (app) {
             // app.style.opacity = (100 - diff)/100;
         }
         //  setIntervals(interval);
     });
-    const products = [{
-    "polje_id": "1",
-    "sifra_proizvoda": [
-        "DFM50E",
-        "DFM50B",
-        "JFM50B",
-        "FM50B"
-    ],
-    "naziv_artikla": "Fasadna mrežica BASIC plava",
-    "naziv_proizvoda_model": [
-        "4x4mm, EKO",
-        "4x4mm,  EKO LIGHT",
-        "4x4mm,  EKO (STANDARD)",
-        "5x5mm"
-    ],
-    "varijacije": [
-        "sifra_proizvoda",
-        "naziv_proizvoda_model",
-        "stiker"
-    ],
-    "meta_description": "Fasadna ili armaturna mrežica koristi se kod fasadnih izolacionih sistema  kako bi se osigurala čvršća veza termoizolacionih materijala.",
-    "prosireni_opis": "Staklena mrežica za malter ili stiropor  je laka i veoma čvrsta. Napravljena je od nezapaljivog materijala i zato se često koristi kod gipsarskih fasada. Izuzetno je postojana i otporna na hemijske uticaje i UV zrake. ",
-    "jedinica_mere": "m2",
-    "kategorija_artikla": "Fasadne mrežice",
-    "potkategorija": "Ostalo",
-    "potkategorija_lista": "/",
-    "minimalno_pakovanje": "50",
-    "transportno_pakovanje": "2000",
-    "zapremina": "/",
-    "kvadratura": "50m2",
-    "sirina": "1m",
-    "duzina": "50m",
-    "visina": "/",
-    "precnik": "/",
-    "debljina": "/",
-    "tezina": "/",
-    "sastav": "Alkali, fiberglass, organska materija ",
-    "boja": "Plava",
-    "stiker": [
-        "NOVO",
-        "/",
-        "/",
-        "/"
-    ],
-    "qr_kod": "https://gromet.rs/shop/1/",
-    "slike": "1-dfm50b-fasadna-mrezica-basic-plava",
-    "model_vise_slika": "FALSE",
-    "url": "/fasadna-mrezica-basic-plava",
-    "tehnicki_crtez": "/",
-    "tip_otpornosti": "Alkalna, hemijska, mehanička, vodootpornost, ne gori",
-    "garancija": "/",
-    "rok_trajanja": "/",
-    "sertifikat": "/",
-    "mesto_i_nacin_skladistenja": " Na suvom mestu, zaštiti od direktnog zračenja sunca ",
-    "dimenzije_pakovanja": "/",
-    "prateca_oprema_dodaci": "Gleterica",
-    "dodatne_napomene": "/",
-    "mesta_primene": "/",
-    "nacin_ugradnje": "/"
-}];
     const [isModalOpen, setIsModalOpen] = useState(!localStorage.getItem('showedCookiesModal'));
     const [isOptionsOpen, setIsOptionsOpen] = useState(false);
     const showModal = () => {
@@ -178,27 +118,28 @@ function App() {
             setAccount(false);
         }
 
-        if (page) {
-            const shopId = window.location.pathname.substring(window.location.pathname.indexOf("/shop/") + 6, window.location.pathname.length);
-            const found = products.find(product => product.qr_kod.includes('shop/' + shopId));
-            console.log("shop id ", window.location.pathname, shopId, found);
-            if (found && shopId) {
-                window.location.href = '/proizvod' + found.url;
-            }
-        }
+        // if (page) {
+        //     console.log("----------------------------------");
+        //     const shopId = window.location.pathname.substring(window.location.pathname.indexOf("/shop/") + 6, window.location.pathname.length);
+        //     const found = products.find(product => product.qr_kod.includes('shop/' + shopId));
+        //     console.log("shop id ", window.location.pathname, shopId, found);
+        //     if (found && shopId) {
+        //         window.location.href = '/proizvod' + found.url;
+        //     }
+        // }
 
     }, [window.location])
 
     useEffect(() => {
         const page = window.location.pathname.includes("shop");
-        if (page) {
-            const shopId = window.location.pathname.substring(window.location.pathname.indexOf("/shop/") + 6, window.location.pathname.length);
-            const found = products.find(product => product.qr_kod.includes('shop/' + shopId));
-            console.log("shop id ", window.location.pathname, shopId, found);
-            if (found && shopId) {
-                window.location.href = '/proizvod' + found.url;
-            }
-        }
+        // if (page) {
+        //     const shopId = window.location.pathname.substring(window.location.pathname.indexOf("/shop/") + 6, window.location.pathname.length);
+        //     const found = products.find(product => product.qr_kod.includes('shop/' + shopId));
+        //     console.log("shop id ", window.location.pathname, shopId, found);
+        //     if (found && shopId) {
+        //         window.location.href = '/proizvod' + found.url;
+        //     }
+        // }
 
     }, [])
 
@@ -231,7 +172,7 @@ function App() {
 
                         <Modal
                             className={window.innerWidth > 900 && !isOptionsOpen ? "modalPositionInitial" : "modalPositionOptions"}
-                            open={isModalOpen && !! localToken}
+                            open={isModalOpen && !!localToken}
                             closable={false}
                             onOk={handleOk}
                             onCancel={handleCancel}
@@ -338,20 +279,21 @@ function App() {
                                 <AffiliateContextProvider>
                                     <Router>
                                         <Routes>
-                                            { !! localToken ? 
-                                            <><Route path="/" element={<Home />}></Route>
-                                            <Route path="/pocetna" element={<Home />}></Route>
-                                            <Route path="/proizvodi" element={<EditAffiliateLayer />}></Route>
-                                            <Route path="/novo" element={<JsonView />}></Route>
-                                            <Route path="/pomocipodrska" element={<HelpPageRouterComponent />}></Route>
-                                            <Route path="/blog" element={<Blog />}></Route>
-                                            <Route path="/blog/Top-10-najboljih-ekoloških-materijala-za-održivu-gradnju" element={<BlogItemPage />}></Route>
-                                            <Route path="/blog/5-razloga-da-suvom-gradnjom-zamenite-tradicionalnu" element={<BlogItemPageB />}></Route>
-                                            <Route path="/blog/Unapredite-izlaganje-proizvoda-uz-naše-nove-police-za-izlaganje" element={<BlogItemPageTwo />}></Route>
-                                            <Route path="/onama" element={<About />}></Route>
-                                            <Route path="/kontakt" element={<Contact />}></Route>
-                                            <Route path="/pravila" element={<Terms />}></Route>
-                                            <Route path="/*" element={<NotFound404 />} status={404}></Route></> : <></>
+                                            {!!localToken ?
+                                                <><Route path="/" element={<Home />}></Route>
+                                                    <Route path="/pocetna" element={<Home />}></Route>
+                                                    <Route path="/proizvodi" element={<EditAffiliateLayer />}></Route>
+                                                    <Route path="/novo" element={<JsonView />}></Route>
+                                                    <Route path="/ducan" element={<ShopView />}></Route>
+                                                    <Route path="/pomocipodrska" element={<HelpPageRouterComponent />}></Route>
+                                                    <Route path="/blog" element={<Blog />}></Route>
+                                                    <Route path="/blog/Top-10-najboljih-ekoloških-materijala-za-održivu-gradnju" element={<BlogItemPage />}></Route>
+                                                    <Route path="/blog/5-razloga-da-suvom-gradnjom-zamenite-tradicionalnu" element={<BlogItemPageB />}></Route>
+                                                    <Route path="/blog/Unapredite-izlaganje-proizvoda-uz-naše-nove-police-za-izlaganje" element={<BlogItemPageTwo />}></Route>
+                                                    <Route path="/onama" element={<About />}></Route>
+                                                    <Route path="/kontakt" element={<Contact />}></Route>
+                                                    <Route path="/pravila" element={<Terms />}></Route>
+                                                    <Route path="/*" element={<NotFound404 />} status={404}></Route></> : <></>
                                             }
 
                                             <Route path="/account/login" element={<Login setAccount={setAccount} />}></Route>
@@ -359,13 +301,15 @@ function App() {
 
                                             {/*private */}
                                             <Route path="/proizvod/*" element={!!token ? <AffiliateLayers /> : <Navigate to="/account/login" />} />
+                                            <Route path="/proizvod/edit/*" element={!!token ? <AffiliateLayersEdit /> : <Navigate to="/account/login" />} />
+
                                             {/* {!!token ? (
                                                 <Route path="/proizvod/*" element={<AffiliateLayers />} />
                                             ) : (
                                                 null
                                             )} */}
 
-                                            {!! localToken ? <></> : <Route path = "/*" element={<Navigate to="/account/login"></Navigate>}></Route>}
+                                            {!!localToken ? <></> : <Route path="/*" element={<Navigate to="/account/login"></Navigate>}></Route>}
                                         </Routes>
                                     </Router>
                                 </AffiliateContextProvider>
