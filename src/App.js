@@ -37,6 +37,8 @@ import { Helmet } from "react-helmet";
 import NotFound404 from './components/ErrorPages/404Page';
 import Login from './components/Account/Login';
 import Register from './components/Account/Register';
+import ForgotPass_sendmail from './components/Account/ForgotPass_sendmail';
+import ForgotPass_resetpass from './components/Account/ForgotPass_resetpass';
 
 const tagManagerArgs = {
     gtmId: 'G-Y8ERRGCNMD'
@@ -298,6 +300,8 @@ function App() {
 
                                             <Route path="/account/login" element={<Login setAccount={setAccount} />}></Route>
                                             <Route path="/account/signup" element={<Register setAccount={setAccount} />}></Route>
+                                            <Route path="/account/forgotpass" element={<ForgotPass_sendmail setAccount={setAccount} />}></Route>
+                                            <Route path="/account/password-reset/*" element={<ForgotPass_resetpass setAccount={setAccount} />}></Route>
 
                                             {/*private */}
                                             <Route path="/proizvod/*" element={!!token ? <AffiliateLayers /> : <Navigate to="/account/login" />} />

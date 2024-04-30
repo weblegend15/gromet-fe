@@ -1,4 +1,4 @@
-.login {
+.forgotpass {
     width: 400px;
     background: #fff;
     /* border: 1px solid #dddfe2; */
@@ -9,7 +9,7 @@
     text-align: center;
 }
 
-.login > form input {
+.forgotpass > form input {
     border-radius: 4px;
     border: 2px solid lightgrey;
     outline: none;
@@ -18,9 +18,4 @@
     width: 92%;
     padding: 12px;
     font-size: 16px;
-}
-
-.forgotpass{
-    border: none;
-    background-color: transparent;
 }

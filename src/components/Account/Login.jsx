@@ -56,6 +56,20 @@ const Login = ({ setAccount }) => {
     return errors;
   };
 
+  const handleforgot = () => {
+    try {
+      var currentURL = new URL(window.location.href);
+      var baseURL = currentURL.origin + currentURL.pathname;
+
+      var forgotPassURL = baseURL.slice(0, -5) + 'forgotpass';
+
+      window.location.href = forgotPassURL;
+      alert('Do you forget password?');
+    } catch (error) {
+      console.error("Error handling forgot password:", error);
+    }
+  }
+
   const handleLogin = (e) => {
     e.preventDefault();
     const errors = validateForm(user);
@@ -66,8 +80,9 @@ const Login = ({ setAccount }) => {
         .post(`${baseApi}/account/login`, { email: user.email, password: user.password })
         .then((res) => {
           if (res.status === 202) {
-            alert("You are not verified yet. Verification email has been sent. Please login again after verification.");
-          } else if (res.status === 200) {
+            alert("Your Email is not verified yet. Verification email has been sent. Please login again after verification.");
+          } else if (res.status === 203) { alert("Your Phone is not verified yet. Please Contact +2341238123"); }
+          else if (res.status === 200) {
             localStorage.setItem('accessToken', res.data.accessToken);
             localStorage.setItem('currentUser', res.data.data.roles[0]);
             navigate("/", { replace: true });
@@ -118,6 +133,7 @@ const Login = ({ setAccount }) => {
           {formErrors.password && (
             <p className={baseStyle.error}>{formErrors.password}</p>
           )}
+          <button style={{ border: 'none', backgroundColor: 'transparent', color: 'blue', display: 'flex', justifyContent: 'left', paddingLeft: 0 }} onClick={handleforgot}>Forgot Password?</button>
           <button className={baseStyle.button_common} onClick={handleLogin}>
             Login
           </button>
