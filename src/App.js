@@ -40,6 +40,7 @@ import Register from "./components/Account/Register";
 import ForgotPass_sendmail from "./components/Account/ForgotPass_sendmail";
 import ForgotPass_resetpass from "./components/Account/ForgotPass_resetpass";
 import Cart from "./components/Content/AffiliateLayers/Cart/Cart";
+import Users from "./components/Content/AffiliateLayers/Users/Users";
 
 const tagManagerArgs = {
   gtmId: "G-Y8ERRGCNMD",
@@ -377,6 +378,7 @@ function App() {
                           <Route path="/onama" element={<About />}></Route>
                           <Route path="/kontakt" element={<Contact />}></Route>
                           <Route path="/cart" element={<Cart />}></Route>
+                          <Route path="/users" element={<Users />}></Route>
                           <Route path="/pravila" element={<Terms />}></Route>
                           <Route
                             path="/*"

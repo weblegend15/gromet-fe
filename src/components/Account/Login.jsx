@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import baseStyle from "./Base.module.css";
 import loginStyle from "./Login.module.css";
-import { baseApi } from '../../constants';
+import { baseApi } from "../../constants";
 
 const Login = ({ setAccount }) => {
   const navigate = useNavigate();
@@ -61,14 +61,14 @@ const Login = ({ setAccount }) => {
       var currentURL = new URL(window.location.href);
       var baseURL = currentURL.origin + currentURL.pathname;
 
-      var forgotPassURL = baseURL.slice(0, -5) + 'forgotpass';
+      var forgotPassURL = baseURL.slice(0, -5) + "forgotpass";
 
       window.location.href = forgotPassURL;
-      alert('Do you forget password?');
+      alert("Do you forget password?");
     } catch (error) {
       console.error("Error handling forgot password:", error);
     }
-  }
+  };
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -77,14 +77,20 @@ const Login = ({ setAccount }) => {
 
     if (Object.keys(errors).length === 0) {
       axios
-        .post(`${baseApi}/account/login`, { email: user.email, password: user.password })
+        .post(`${baseApi}/account/login`, {
+          email: user.email,
+          password: user.password,
+        })
         .then((res) => {
           if (res.status === 202) {
-            alert("Your Email is not verified yet. Verification email has been sent. Please login again after verification.");
-          } else if (res.status === 203) { alert("Your Phone is not verified yet. Please Contact +2341238123"); }
-          else if (res.status === 200) {
-            localStorage.setItem('accessToken', res.data.accessToken);
-            localStorage.setItem('currentUser', res.data.data.roles[0]);
+            alert(
+              "Your Email is not verified yet. Verification email has been sent. Please login again after verification."
+            );
+          } else if (res.status === 203) {
+            alert("Your Phone is not verified yet. Please Contact +2341238123");
+          } else if (res.status === 200) {
+            localStorage.setItem("accessToken", res.data.accessToken);
+            localStorage.setItem("currentUser", res.data.data.roles);
             navigate("/", { replace: true });
             setAccount(false);
           }
@@ -97,10 +103,10 @@ const Login = ({ setAccount }) => {
             alert("Password is incorrect.");
             setUserDetails({
               ...user,
-              password: '',
+              password: "",
             });
           } else if (error.response.status === 500) {
-            alert('Server error.');
+            alert("Server error.");
             navigate("/", { replace: true });
             setAccount(false);
           }
@@ -133,7 +139,19 @@ const Login = ({ setAccount }) => {
           {formErrors.password && (
             <p className={baseStyle.error}>{formErrors.password}</p>
           )}
-          <button style={{ border: 'none', backgroundColor: 'transparent', color: 'blue', display: 'flex', justifyContent: 'left', paddingLeft: 0 }} onClick={handleforgot}>Forgot Password?</button>
+          <button
+            style={{
+              border: "none",
+              backgroundColor: "transparent",
+              color: "blue",
+              display: "flex",
+              justifyContent: "left",
+              paddingLeft: 0,
+            }}
+            onClick={handleforgot}
+          >
+            Forgot Password?
+          </button>
           <button className={baseStyle.button_common} onClick={handleLogin}>
             Login
           </button>

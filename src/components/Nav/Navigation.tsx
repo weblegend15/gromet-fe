@@ -29,6 +29,7 @@ const navLinks = [
   { text: "Kontakt", href: "/kontakt" },
   { text: "Dućan", href: "/ducan" },
   { text: "Košarica", href: "/cart" },
+  { text: "Users", href: "/users" },
 ];
 
 function Navigation() {
@@ -236,6 +237,11 @@ function Navigation() {
                   text == "Dućan"
                 )
                   return <></>;
+                if (
+                  localStorage.getItem("currentUser") === "USER" &&
+                  text == "Users"
+                )
+                  return <></>;
                 return (
                   <div
                     key={text}
@@ -364,7 +370,7 @@ function Navigation() {
                 <div
                   className="input-icons"
                   style={{
-                    width: "330px",
+                    width: "200px",
                     textAlign: "right",
                     display: "flex",
                   }}
@@ -376,7 +382,7 @@ function Navigation() {
                     maxLength={30}
                     style={{
                       right: searchQuery.length > 0 ? "-32px" : "-15px",
-                      width: "220px",
+                      width: "160px",
                       marginLeft: "auto",
                     }}
                     onChange={(e) => handleSearchChange(e)}
