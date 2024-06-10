@@ -64,6 +64,7 @@ export interface Product {
   url: string;
   model_vise_slika: string;
   count: number;
+  price: number;
 }
 
 interface DataType {
@@ -108,6 +109,7 @@ function ProductPage() {
   const tip_otpornosti_Ref = useRef<HTMLInputElement>(null);
   const mesto_i_nacin_skladistenja_Ref = useRef<HTMLInputElement>(null);
   const count_Ref = useRef<HTMLInputElement>(null);
+  const price_Ref = useRef<HTMLInputElement>(null);
   const [modelcntvalue, setmodelcntvalue] = useState(1);
   const [selectedFile, setSelectedFile] = useState<any>([]);
 
@@ -292,6 +294,7 @@ function ProductPage() {
           (mesto_i_nacin_skladistenja_Ref.current.value =
             product?.mesto_i_nacin_skladistenja);
         count_Ref.current && (count_Ref.current.value = product?.count);
+        price_Ref.current && (price_Ref.current.value = product?.price);
         setmodelcntvalue(product.sifra_proizvoda.length);
         let modelcnt: any = document.getElementById(`modelcnt`);
         modelcnt.value = product.sifra_proizvoda.length;
@@ -419,6 +422,7 @@ function ProductPage() {
           mesto_i_nacin_skladistenja_Ref.current?.value || "/"
         );
         formData.append("count", count_Ref.current?.value || "/");
+        formData.append("price", price_Ref.current?.value || "/");
 
         formData.append(
           "potkategorija_lista",
@@ -986,6 +990,19 @@ function ProductPage() {
                     defaultValue={0}
                     id="count"
                     ref={count_Ref}
+                  />
+                </div>
+
+                <div className="input-edit-form">
+                  <label className="label-edit-name ">
+                    price<span className="color-red">*</span>
+                  </label>
+                  <input
+                    className="input-edit-field"
+                    type="number"
+                    defaultValue={0}
+                    id="price"
+                    ref={price_Ref}
                   />
                 </div>
               </div>

@@ -138,7 +138,7 @@ background-color: #004D8C !important;
 
 .divFeaturedProductsContainer {
   display: flex;
-  min-height: 340px;
+  min-height: 100px;
   flex-direction: row;
   flex-wrap: wrap;
 }

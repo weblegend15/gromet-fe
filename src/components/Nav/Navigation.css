@@ -36,9 +36,6 @@
 
 /* STYLE */
 
-.block-slideshow__slide-contentNav {
-  /* background-color: rgb(223, 222, 222) !important; */
-}
 .carouselNavigationVeleprodajaContainer .slick-slide {
   background-color: rgb(223, 222, 222) !important;
   height: 20px;
@@ -267,7 +264,7 @@
 }
 
 .navPanelContainer {
-  background: #f0f0f0;
+  background: #fff;
 }
 
 .navPanel {
@@ -883,4 +880,40 @@
   .divUsernameContainer span {
     right: 30px;
   }
+}
+
+.businessInfo {
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.businessInfo > div {
+  height: 100%;
+  padding-top: 10px;
+  border-right: 1px solid #004d8c;
+  padding: 10px 10px;
+}
+
+.businessInfo > div:hover {
+  cursor: pointer;
+}
+
+.moj {
+  font-size: 10px;
+  line-height: 10px;
+  font-weight: 700;
+}
+
+.bucket-badge {
+  position: relative;
+}
+.bucket-badge::after {
+  content: "";
+  width: 20;
+  height: 20;
+  background-color: blue;
+  position: absolute;
+  top: 0;
+  right: 0;
 }

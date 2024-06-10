@@ -8,10 +8,6 @@ import blog0 from '../../assets/blogOne/slika1.webp';
 import blog1 from '../../assets/blogtwo/slika8.webp';
 import blog2 from '../../assets/blogThree/police-za-izlaganje.webp'
 
-
-
-
-
 import blog0_thumbnails from '../../assets/blogOne/blog1.webp';
 
 import blog1_thumbnails from '../../assets/blogtwo/blog2.webp';

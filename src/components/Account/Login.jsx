@@ -91,6 +91,8 @@ const Login = ({ setAccount }) => {
           } else if (res.status === 200) {
             localStorage.setItem("accessToken", res.data.accessToken);
             localStorage.setItem("currentUser", res.data.data.roles);
+            sessionStorage.setItem("rebate", res.data.data.rebate);
+            localStorage.setItem("userEmail", user.email);
             navigate("/", { replace: true });
             setAccount(false);
           }
@@ -117,8 +119,9 @@ const Login = ({ setAccount }) => {
   return (
     <div className={baseStyle.account}>
       <div className={loginStyle.login}>
+        <h1>Registrovani korisnik</h1>
+        <h2>Prijavi se</h2>
         <form>
-          <h1>Login</h1>
           <input
             type="email"
             name="email"
@@ -150,11 +153,13 @@ const Login = ({ setAccount }) => {
             }}
             onClick={handleforgot}
           >
-            Forgot Password?
+            Zaboravili ste lozinku?
           </button>
           <button className={baseStyle.button_common} onClick={handleLogin}>
-            Login
+            Prijavite se
           </button>
+          <input type="checkbox" />
+          <label>Zapamti me</label>
         </form>
         <Link to="/account/signup">Not yet registered? Register Now</Link>
       </div>

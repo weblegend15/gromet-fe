@@ -1,34 +1,60 @@
 import React, { useEffect, useState } from "react";
 import { Button, Space, Table, Tag } from "antd";
 import type { TableProps } from "antd";
+import ButtonGroup from "antd/es/button/button-group";
+import EditModal from "./EditModal";
 import axios from "axios";
 import { baseApi } from "../../../../constants";
 
-interface DataType {
+interface User {
+  id: string;
   key: string;
-  name: string;
+  username: string;
   email: string;
   isEmailVerified: boolean;
   isPhoneVerified: boolean;
   roles: string;
   createdAt: string;
   delete: string;
+  rebate: Number;
 }
 
-const PhoneVerifByID = (id: any) => {
-  console.log("yes", id);
-};
-
 type Props = {
-  users: any;
-  DeleteById: Function;
-  verifyPhone: Function;
+  users: User[];
+  DeleteById: (id: string) => void;
+  verifyPhone: (id: string) => void;
+  getAllUsers: () => void;
 };
 
-const UserTables = ({ users, DeleteById, verifyPhone }: Props) => {
-  const [data, setData] = useState([]);
+const UserTables: React.FC<Props> = ({
+  users,
+  DeleteById,
+  verifyPhone,
+  getAllUsers,
+}) => {
+  const [data, setData] = useState<User[]>([]);
 
-  const columns: TableProps<DataType>["columns"] = [
+  const handleUpdate = async (updatedUser: User) => {
+    console.log(updatedUser);
+    const token: string | null = localStorage.getItem("accessToken");
+    if (token) {
+      const header = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      return await axios
+        .post(`${baseApi}/users/updateUser`, { data: updatedUser }, header)
+        .then((res) => {
+          alert("Updated Successfully");
+          getAllUsers();
+        })
+        .catch((err) => {});
+    }
+  };
+
+  const columns: TableProps<User>["columns"] = [
     {
       title: "Name",
       dataIndex: "username",
@@ -57,15 +83,25 @@ const UserTables = ({ users, DeleteById, verifyPhone }: Props) => {
       title: "Phone Status",
       dataIndex: "isPhoneVerified",
       key: "isPhoneVerified",
-      render: (v) =>
-        v == "done" ? (
+      render: (v, record) =>
+        v ? (
           <Tag color="green">Verified</Tag>
         ) : (
-          <Button size="small" type="primary" onClick={() => verifyPhone(v)}>
+          <Button
+            size="small"
+            type="primary"
+            onClick={() => verifyPhone(record.key)}
+          >
             Verify
           </Button>
         ),
     },
+    {
+      title: "Rebate",
+      dataIndex: "rebate",
+      key: "rebate",
+    },
+
     {
       title: "Joined From",
       dataIndex: "createdAt",
@@ -76,26 +112,25 @@ const UserTables = ({ users, DeleteById, verifyPhone }: Props) => {
       title: "Action",
       key: "delete",
       dataIndex: "delete",
-      render: (v) => (
-        <Button size="middle" onClick={() => DeleteById(v)}>
-          Delete
-        </Button>
+      render: (v: string, val: User) => (
+        <ButtonGroup>
+          <EditModal user={val} onUpdate={handleUpdate} />
+          <Button size="middle" onClick={() => DeleteById(val.key)}>
+            Delete
+          </Button>
+        </ButtonGroup>
       ),
     },
   ];
 
   useEffect(() => {
     setData(
-      users.map((v: any, i: number) => {
-        const temp = { ...v };
-        temp["key"] = i;
-        temp["delete"] = v._id;
-        if (temp.isPhoneVerified == false) temp.isPhoneVerified = temp._id;
-        else temp.isPhoneVerified = "done";
-        return temp;
-      })
+      users.map((v, i) => ({
+        ...v,
+        key: i.toString(),
+        delete: v.key,
+      }))
     );
-    console.log("Here", data);
   }, [users]);
 
   return <Table columns={columns} dataSource={data} />;

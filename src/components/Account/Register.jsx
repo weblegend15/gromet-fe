@@ -176,29 +176,20 @@ const Register = ({ setAccount }) => {
   return (
     <div className={baseStyle.account}>
       <div className={registerStyle.register}>
+        <h1>Još uvek nemate nalog?</h1>
+        <h2>Registrujte se</h2>
         <form>
-          <h2>Register</h2>
           <input
             type="text"
             name="companyname"
-            placeholder="CompanyName"
+            placeholder="Naziv kompanije"
             onChange={handleChange}
             value={user.companyname}
           />
           {formErrors.companyname && (
             <p className={baseStyle.error}>{formErrors.companyname}</p>
           )}
-          <input
-            type="text"
-            name="username"
-            placeholder="Username"
-            onChange={handleChange}
-            value={user.username}
-          />
-          {formErrors.username && (
-            <p className={baseStyle.error}>{formErrors.username}</p>
-          )}
-
+          
           <input
             type="text"
             name="pib"
@@ -210,23 +201,34 @@ const Register = ({ setAccount }) => {
             <p className={baseStyle.error}>{formErrors.pib}</p>
           )}
 
-          <div style={{ display: "flex", flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-            <span style={{ marginTop: '1rem', marginRight: "10px" }}>+381</span>
-            <input
-              type="tel"
-              name="phonenumber"
-              placeholder="Phone Number"
-              onChange={handleChange}
-              value={user.phonenumber}
-            />
-          </div>
+          <input
+            type="text"
+            name="username"
+            placeholder="Username"
+            onChange={handleChange}
+            value={user.username}
+          />
+          {formErrors.username && (
+            <p className={baseStyle.error}>{formErrors.username}</p>
+          )}
+
+          {/* <div style={{ display: "flex", flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+            <span style={{ marginTop: '1rem', marginRight: "10px" }}>+381</span> */}
+          <input
+            type="tel"
+            name="phonenumber"
+            placeholder="Broj telefona"
+            onChange={handleChange}
+            value={user.phonenumber}
+          />
+          {/* </div> */}
           {formErrors.phonenumber && (
             <p className={baseStyle.error}>{formErrors.phonenumber}</p>
           )}
           <input
             type="email"
             name="email"
-            placeholder="Email"
+            placeholder="E-mail"
             onChange={handleChange}
             value={user.email}
           />

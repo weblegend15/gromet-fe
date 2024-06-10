@@ -4,6 +4,8 @@ import "./Cart.css";
 import { useBreadCrumbsUpdateContext } from "../Context/BreadCrumbsContext";
 import axios from "axios";
 import { baseApi } from "../../../../constants";
+import useAppContext from "../../../../provider/AppContext";
+import ShoppingCart from "./ShoppingCart";
 
 const Cart: React.FC = () => {
   const routeHistoryUpdate = useBreadCrumbsUpdateContext();
@@ -13,6 +15,11 @@ const Cart: React.FC = () => {
     localStorage.getItem("currentUser")
   );
 
+  const { state, dispatch } = useAppContext();
+
+  const updateValue = (v: number) => {
+    dispatch({ type: "SET_VALUE", payload: v });
+  };
   const getAllCartsWithID = () => {
     let token = localStorage.getItem("accessToken");
     axios
@@ -23,6 +30,8 @@ const Cart: React.FC = () => {
       })
       .then((res) => {
         setCarts(res.data.data);
+
+        updateValue(res.data.data.length);
       });
   };
 
@@ -36,6 +45,8 @@ const Cart: React.FC = () => {
       })
       .then((res) => {
         setCarts(res.data.data.filter((v: any) => v.status !== 0));
+
+        updateValue(res.data.data.filter((v: any) => v.status !== 0).length);
       });
   };
 
@@ -76,31 +87,6 @@ const Cart: React.FC = () => {
       });
   };
 
-  const orderProduct = async (id: any, index: number) => {
-    const temp: any = carts[index];
-    if (temp.count > temp.itemNum.count) {
-      alert(`Total number of products are only ", ${temp.itemNum.count}`);
-      return;
-    }
-    console.log(temp);
-    const token: string | null = localStorage.getItem("accessToken");
-    if (token) {
-      const header = {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      };
-
-      return await axios
-        .post(`${baseApi}/cart/SetOrderByID`, { product_id: id }, header)
-        .then((res) => {
-          alert("Ordered Successfully");
-          getCartsByRole();
-        })
-        .catch((err) => {});
-    }
-  };
-
   const proveProduct = async (id: any) => {
     const token: string | null = localStorage.getItem("accessToken");
     if (token) {
@@ -120,34 +106,19 @@ const Cart: React.FC = () => {
     }
   };
 
-  const deleteProduct = async (id: any) => {
-    const token: string | null = localStorage.getItem("accessToken");
-    if (token) {
-      const header = {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      };
-
-      return await axios
-        .post(`${baseApi}/cart/DeleteCartrByID`, { product_id: id }, header)
-        .then((res) => {
-          alert("Canceled Successfully");
-          getCartsByRole();
-        })
-        .catch((err) => {});
-    }
-  };
   const DelAll = () => (userType === "USER" ? DeleteAllByUser() : DeleteAll());
-
-  useEffect(() => {
-    console.log(carts);
-  }, [carts]);
 
   return (
     <div className="block">
       <div className="container">
-        <div className="my-cart space-between">
+        <ShoppingCart
+          products={carts}
+          setProducts={setCarts}
+          getCartsByRole={getCartsByRole}
+        />
+      </div>
+
+      {/*<div className="my-cart space-between">
           <h6>All Carts : {carts.length || 0}</h6>
           <Button type="primary" className="btn-add" onClick={DelAll}>
             Cancel All Carts
@@ -222,8 +193,7 @@ const Cart: React.FC = () => {
               </Card>
             );
           })}
-        </Space>
-      </div>
+        </Space> */}
     </div>
   );
 };

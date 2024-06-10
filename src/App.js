@@ -26,6 +26,12 @@ import { UpOutlined, PlusOutlined, MinusOutlined } from "@ant-design/icons";
 import HelpPageRouterComponent from "./components/Pages/HelpPageRouterComponent";
 import Gromet60 from "./assets/gromet-logo-60px.webp";
 import BlogItemPageB from "./components/Pages/BlogItemPageB";
+import Profile from "./components/Pages/Profile";
+import MainUser from "./components/Pages/Details/MainUser";
+import FinancialCard from "./components/Pages/Details/FinancialCard";
+import Orders from "./components/Pages/Details/Orders";
+import Promotions from "./components/Pages/Details/Promotions";
+import RecommendedPurchase from "./components/Pages/Details/RecommendedPurchase";
 
 import moment from "moment";
 import TagManager from "react-gtm-module";
@@ -35,12 +41,14 @@ import BlogItemPageTwo from "./components/Pages/BlogItemPageTwo";
 
 import { Helmet } from "react-helmet";
 import NotFound404 from "./components/ErrorPages/404Page";
-import Login from "./components/Account/Login";
-import Register from "./components/Account/Register";
+// import Login from "./components/Account/Login";
+// import Register from "./components/Account/Register";
+import Auth from "./components/Account/Auth";
 import ForgotPass_sendmail from "./components/Account/ForgotPass_sendmail";
 import ForgotPass_resetpass from "./components/Account/ForgotPass_resetpass";
 import Cart from "./components/Content/AffiliateLayers/Cart/Cart";
 import Users from "./components/Content/AffiliateLayers/Users/Users";
+import History from "./components/Pages/Details/History";
 
 const tagManagerArgs = {
   gtmId: "G-Y8ERRGCNMD",
@@ -322,11 +330,11 @@ function App() {
               )}
             </Modal>
 
-            {!account && (
-              <div hidden={hideTopbar}>
-                <Navigation />
-              </div>
-            )}
+            {/* {!account && (
+              <div hidden={hideTopbar}> */}
+            <Navigation />
+            {/* </div>
+            )} */}
 
             <section
               style={{
@@ -356,6 +364,10 @@ function App() {
                             path="/proizvodi"
                             element={<EditAffiliateLayer />}
                           ></Route>
+                          <Route
+                            path="/account/profile/*"
+                            element={<Profile />}
+                          />
                           <Route path="/novo" element={<JsonView />}></Route>
                           <Route path="/ducan" element={<ShopView />}></Route>
                           <Route
@@ -392,11 +404,11 @@ function App() {
 
                       <Route
                         path="/account/login"
-                        element={<Login setAccount={setAccount} />}
+                        element={<Auth setAccount={setAccount} />}
                       ></Route>
                       <Route
                         path="/account/signup"
-                        element={<Register setAccount={setAccount} />}
+                        element={<Auth setAccount={setAccount} />}
                       ></Route>
                       <Route
                         path="/account/forgotpass"

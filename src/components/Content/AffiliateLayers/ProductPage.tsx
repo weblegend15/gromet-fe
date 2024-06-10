@@ -1,7 +1,12 @@
 import "./ProductPage.css";
 import React, { useEffect, useRef, useState } from "react";
-import { RightOutlined, LeftOutlined } from "@ant-design/icons";
-import { Row, Tabs, TabsProps } from "antd";
+import {
+  RightOutlined,
+  LeftOutlined,
+  MinusOutlined,
+  PlusOutlined,
+} from "@ant-design/icons";
+import { Input, Row, Space, Tabs, TabsProps } from "antd";
 import { Button, Radio, Dropdown } from "antd";
 import type { MenuProps } from "antd";
 import { useBreadCrumbsUpdateContext } from "./Context/BreadCrumbsContext";
@@ -37,6 +42,7 @@ import { Helmet } from "react-helmet";
 import { baseApi } from "../../../constants";
 import axios, { AxiosResponse } from "axios";
 import OrderModal from "./OrderModal";
+import OrderSide from "./OrderSide";
 
 export interface Product {
   _id: string;
@@ -79,6 +85,7 @@ export interface Product {
   url: string;
   model_vise_slika: string;
   count: number;
+  price: number;
 }
 
 interface DataType {
@@ -129,6 +136,8 @@ function ProductPage() {
   };
 
   const [showShare, setShowShare] = useState<boolean>(false);
+  const [Mini_val, setMini_val] = useState<number>(0);
+  const [Trans_val, setTrans_val] = useState<number>(0);
 
   const [dimensionChosen, setDimensionChosen] = useState<number>(0);
   const [showFirmTip, setShowFirmTip] = useState<boolean>(false);
@@ -138,9 +147,43 @@ function ProductPage() {
   const [productsList, setProductList] = useState<Product[]>([]); //useState([]);//useState([...products]);
 
   const [product, setProduct] = useState<Product>({} as Product);
+  const [rebate, setRebate] = useState<Number>(
+    Number(sessionStorage.getItem("rebate"))
+  );
 
   const myRef = useRef<HTMLDivElement>(null);
   let currentproductcount = product.count;
+
+  const incrementMini = () => {
+    setMini_val((prevValue: number) => Number(prevValue) + 1);
+  };
+
+  const decrementMini = () => {
+    setMini_val((prevValue: number) => Number(prevValue) - 1);
+  };
+
+  const handleChangeMini = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = parseInt(e.target.value, 10);
+    if (!isNaN(newValue)) {
+      setMini_val(newValue);
+    }
+  };
+
+  const incrementTrans = () => {
+    setTrans_val((prevValue: number) => Number(prevValue) + 1);
+  };
+
+  const decrementTrans = () => {
+    setTrans_val((prevValue: number) => Number(prevValue) - 1);
+  };
+
+  const handleChangeTrans = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = parseInt(e.target.value, 10);
+    if (!isNaN(newValue)) {
+      setTrans_val(newValue);
+    }
+  };
+
   const executeScroll = () => {
     //console.log("first", myRef?.current)
     if (myRef?.current) {
@@ -267,6 +310,8 @@ function ProductPage() {
         document.title = product.naziv_artikla;
         // setTimeout(() => {
         setProduct(product as Product);
+        setMini_val(product.minimalno_pakovanje);
+        setTrans_val(product.transportno_pakovanje);
         if (!window.location.hash) {
           // window.location.hash = product?.sifra_proizvoda[dimensionChosen];
         } else if (Array.isArray(product.sifra_proizvoda)) {
@@ -1135,42 +1180,8 @@ function ProductPage() {
 
                 <span
                   className="singleProductPageDescription"
-                  style={{ marginBottom: "20px" }}
+                  style={{ marginBottom: "0px" }}
                 >
-                  {localStorage.getItem("currentUser") === "USER" && (
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "row",
-                        alignItems: "center",
-                      }}
-                    >
-                      Status:
-                      <div style={{ marginLeft: "8px", alignItems: "center" }}>
-                        {product.count === 0 && (
-                          <img
-                            src="https://www.freeiconspng.com/uploads/red-circle-icon-1.png"
-                            width={15}
-                            alt="Red Circle"
-                          />
-                        )}
-                        {product.count > 0 && (
-                          <img
-                            src="https://www.freeiconspng.com/uploads/purple-circle-icon-5.png"
-                            width={15}
-                            alt="Purple Circle"
-                          />
-                        )}
-                        {product.count > 5 && (
-                          <img
-                            src="https://www.freeiconspng.com/uploads/green-circle-icon-14.png"
-                            width={15}
-                            alt="Green Circle"
-                          />
-                        )}
-                      </div>
-                    </div>
-                  )}
                   {localStorage.getItem("currentUser") === "ADMIN" && (
                     <div
                       style={{
@@ -1346,7 +1357,185 @@ function ProductPage() {
                     style={{ borderTop: "0px" }}
                   ></div>
 
-                  <div className="divProductActionButtons">
+                  <div style={{ display: "flex", padding: "20px" }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        textDecoration: "line-through",
+                        opacity: 0.6,
+                        fontSize: "20px",
+                        fontWeight: "700",
+                      }}
+                    >
+                      <div style={{ marginLeft: "8px", alignItems: "center" }}>
+                        VP cena: {product.price}
+                      </div>
+                    </div>
+
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        fontSize: "20px",
+                        fontWeight: "700",
+                        marginLeft: "70px",
+                      }}
+                    >
+                      Neto cena:
+                      <div
+                        style={{
+                          marginLeft: "8px",
+                          alignItems: "center",
+                          color: "#ce8410",
+                        }}
+                      >
+                        {(product.price * (100 - Number(rebate))) / 100} RSD
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style={{ display: "flex" }}>
+                    <div style={{ width: "70%" }}>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          margin: "5px 0px",
+                        }}
+                      >
+                        <span>Minimalno pakovanje:</span>
+                        <div style={{ display: "flex", gap: 5 }}>
+                          <Space>
+                            <Button
+                              onClick={decrementMini}
+                              icon={<MinusOutlined />}
+                              size="small"
+                            />
+                            <Input
+                              type="text"
+                              size="small"
+                              value={Mini_val}
+                              onChange={handleChangeMini}
+                              style={{ width: "40px", textAlign: "center" }}
+                            />
+                            <Button
+                              onClick={incrementMini}
+                              icon={<PlusOutlined />}
+                              size="small"
+                            />
+                          </Space>
+                          <OrderSide
+                            product={product as Product}
+                            value={Mini_val}
+                          />
+                        </div>
+                      </div>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          margin: "5px 0px",
+                        }}
+                      >
+                        <span>Transportno pakovanje:</span>
+                        <div style={{ display: "flex", gap: 5 }}>
+                          <Space>
+                            <Button
+                              onClick={decrementTrans}
+                              icon={<MinusOutlined />}
+                              size="small"
+                            />
+                            <Input
+                              type="text"
+                              size="small"
+                              value={Trans_val}
+                              onChange={handleChangeTrans}
+                              style={{ width: "40px", textAlign: "center" }}
+                            />
+                            <Button
+                              onClick={incrementTrans}
+                              icon={<PlusOutlined />}
+                              size="small"
+                            />
+                          </Space>
+                          <OrderSide
+                            product={product as Product}
+                            value={Trans_val}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      style={{
+                        width: "30%",
+                        display: "flex",
+                        justifyContent: "flex-end",
+                        alignItems: "center",
+                      }}
+                    >
+                      <div style={{ marginLeft: "8px", alignItems: "right" }}>
+                        {product.count === 0 && (
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "space-between",
+                              gap: 10,
+                            }}
+                          >
+                            <img
+                              src="https://www.freeiconspng.com/uploads/red-circle-icon-1.png"
+                              width={15}
+                              alt="Red Circle"
+                            />
+                            <p>Minimalno na stanju</p>
+                          </div>
+                        )}
+                        {product.count > 0 && (
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "space-between",
+                              gap: 10,
+                            }}
+                          >
+                            <img
+                              src="https://www.freeiconspng.com/uploads/purple-circle-icon-5.png"
+                              width={15}
+                              height={15}
+                              alt="Purple Circle"
+                            />
+                            <p>Nema na stanju</p>
+                          </div>
+                        )}
+                        {product.count > 5 && (
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "space-between",
+                              gap: 10,
+                            }}
+                          >
+                            <img
+                              src="https://www.freeiconspng.com/uploads/green-circle-icon-14.png"
+                              width={15}
+                              alt="Green Circle"
+                            />
+                            <p>Na stanju</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  <OrderModal product={product} />
+
+                  {/* <div className="divProductActionButtons">
                     <label className="labelHowToOrder">Za pravna lica</label>
                     <div className="divHowToOrderButtons">
                       {localStorage.getItem("currentUser") === "USER" && (
@@ -1425,7 +1614,6 @@ function ProductPage() {
                             wordBreak: "normal",
                           }}
                         >
-                          {/* showPersonTip ? "#004d8c" : '' */}
                           Informacije za fizička lica
                         </div>
                       </Button>
@@ -1552,7 +1740,7 @@ function ProductPage() {
                         </li>
                       </ul>
                     </div>
-                  </div>
+                  </div> */}
                   <div></div>
 
                   {/* <span>Kolicina</span>

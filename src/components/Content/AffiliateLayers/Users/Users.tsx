@@ -4,6 +4,7 @@ import { useBreadCrumbsUpdateContext } from "../Context/BreadCrumbsContext";
 import axios from "axios";
 import { baseApi } from "../../../../constants";
 import UserTables from "./UserTable";
+import useAppContext from "../../../../provider/AppContext";
 
 const Users: React.FC = () => {
   const routeHistoryUpdate = useBreadCrumbsUpdateContext();
@@ -13,6 +14,11 @@ const Users: React.FC = () => {
     localStorage.getItem("currentUser")
   );
 
+  const { state, dispatch } = useAppContext();
+
+  const updateValue = (v: number) => {
+    dispatch({ type: "SET_VALUE", payload: v });
+  };
   const getAllUsersWithID = () => {
     let token = localStorage.getItem("accessToken");
     axios
@@ -23,6 +29,7 @@ const Users: React.FC = () => {
       })
       .then((res) => {
         setCarts(res.data.data);
+        updateValue(res.data.data.length);
       });
   };
 
@@ -36,6 +43,8 @@ const Users: React.FC = () => {
       })
       .then((res) => {
         setCarts(res.data.data.filter((v: any) => v.status !== 0));
+
+        updateValue(res.data.data.filter((v: any) => v.status !== 0).length);
       });
   };
 
@@ -80,7 +89,6 @@ const Users: React.FC = () => {
         .post(`${baseApi}/users/DeleteUserByID`, { selected: id }, header)
         .then((res) => {
           alert("Deleted Successfully");
-          console.log(res);
           getAllUsers();
         })
         .catch((err) => {});
@@ -120,6 +128,7 @@ const Users: React.FC = () => {
             users={carts}
             DeleteById={DeleteById}
             verifyPhone={verifyPhone}
+            getAllUsers={getAllUsers}
           />
         </Space>
       </div>
