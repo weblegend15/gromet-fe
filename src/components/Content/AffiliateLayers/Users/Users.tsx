@@ -10,6 +10,7 @@ const Users: React.FC = () => {
   const routeHistoryUpdate = useBreadCrumbsUpdateContext();
   const [carts, setCarts] = useState([]);
   const [myOrders, setMyOrders] = useState<any>([]);
+  const [categories, setCategories] = useState<any>([]);
   const [userType, setUserType] = useState<any>(
     localStorage.getItem("currentUser")
   );
@@ -53,8 +54,29 @@ const Users: React.FC = () => {
   };
 
   useEffect(() => {
-    routeHistoryUpdate(["Početna", "Users"]);
+    routeHistoryUpdate(["Pocetna", "Users"]);
     getAllUsers();
+  }, []);
+
+  useEffect(() => {
+    let token = localStorage.getItem("accessToken");
+    axios
+      .get(`${baseApi}/products/getProducts`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((res: any) => {
+        if (res.data.data) {
+          const arr: string[] = [];
+          res.data.data.map((v: any) => {
+            if (v.kategorija_artikla && !arr.includes(v.kategorija_artikla)) {
+              arr.push(v.kategorija_artikla);
+            }
+          });
+          setCategories(arr);
+        }
+      });
   }, []);
 
   const DeleteAll = async () => {
@@ -71,12 +93,7 @@ const Users: React.FC = () => {
       });
   };
 
-  useEffect(() => {
-    console.log(carts);
-  }, [carts]);
-
   const DeleteById = async (id: any) => {
-    console.log("delete", id);
     const token: string | null = localStorage.getItem("accessToken");
     if (token) {
       const header = {
@@ -126,6 +143,7 @@ const Users: React.FC = () => {
         <Space direction="vertical" size="middle" style={{ display: "flex" }}>
           <UserTables
             users={carts}
+            categories={categories}
             DeleteById={DeleteById}
             verifyPhone={verifyPhone}
             getAllUsers={getAllUsers}

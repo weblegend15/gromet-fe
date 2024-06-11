@@ -131,7 +131,7 @@ const OrderSide = ({ product, value }: Props) => {
           }}
         >
           <div>
-            {carts.length &&
+            {carts &&
               carts.map((v: any, index: number) => {
                 return (
                   <div
@@ -162,11 +162,13 @@ const OrderSide = ({ product, value }: Props) => {
                         {v.itemNum?.naziv_artikla}
                       </div>
                       <div style={{ margin: "5px" }}>
-                        <b>Količina:</b> {v.count}
+                        <b>Kolicina:</b> {v.count}
                       </div>
                       <div style={{ margin: "5px" }}>
                         <b>Ukupna vrednost bez PDV-a:</b>{" "}
-                        {(v.count * v.itemNum?.price * (100 - rebate)) / 100}
+                        {Number(
+                          (v.count * v.itemNum?.price * (100 - rebate)) / 100
+                        )}
                       </div>
                     </div>
                   </div>
@@ -196,7 +198,7 @@ const OrderSide = ({ product, value }: Props) => {
                   <div style={{ width: "100%" }}>
                     <div style={{ margin: "5px" }}>{product.naziv_artikla}</div>
                     <div style={{ margin: "5px" }}>
-                      <b>Količina:</b> {value}
+                      <b>Kolicina:</b> {value}
                     </div>
                     <div style={{ margin: "5px" }}>
                       <b>Ukupna vrednost bez PDV-a:</b>{" "}

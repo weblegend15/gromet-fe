@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Form, Input, Button, Checkbox, Select } from "antd";
 import { FormInstance } from "antd/lib/form";
+import SearchInput from "./SearchInput";
 
 interface User {
   id: string;
@@ -17,10 +18,15 @@ interface User {
 
 interface EditModalProps {
   user: User;
+  categories: string[];
   onUpdate: (user: User) => void;
 }
 
-const EditModal: React.FC<EditModalProps> = ({ user, onUpdate }) => {
+const EditModal: React.FC<EditModalProps> = ({
+  user,
+  onUpdate,
+  categories,
+}) => {
   const [visible, setVisible] = useState(false);
   const [form] = Form.useForm<User>();
   const [rebateArr, setRebateArr] = useState<any>([]);
@@ -37,7 +43,6 @@ const EditModal: React.FC<EditModalProps> = ({ user, onUpdate }) => {
   };
 
   const handleFinish = (values: Partial<User>) => {
-    console.log(values, rebateArr);
     values.rebate = [...rebateArr];
     onUpdate({ ...user, ...values });
     setVisible(false);
@@ -45,6 +50,10 @@ const EditModal: React.FC<EditModalProps> = ({ user, onUpdate }) => {
 
   const handleDelete = (id: number) => {
     const arr = rebateArr.filter((_: any, index: number) => index !== id);
+
+    setNewCat("");
+    setNewVal(0);
+    setEditId(-1);
     setRebateArr(arr);
   };
 
@@ -118,7 +127,6 @@ const EditModal: React.FC<EditModalProps> = ({ user, onUpdate }) => {
 
           <Form.Item name="rebate" label="Rebate">
             {rebateArr.map((v: any, index: number) => {
-              console.log("Here", v);
               return (
                 <div style={{ display: "flex", alignItems: "flex-end" }}>
                   <div style={{ margin: "5px" }}>
@@ -155,9 +163,10 @@ const EditModal: React.FC<EditModalProps> = ({ user, onUpdate }) => {
                   <span style={{ fontSize: "13px", paddingLeft: "10px" }}>
                     Category
                   </span>
-                  <Input
-                    value={newCat}
-                    onChange={(e: any) => setNewCat(e.target.value)}
+                  <SearchInput
+                    categories={categories}
+                    val={newCat}
+                    func={setNewCat}
                   />
                 </div>
                 <div style={{ margin: "5px" }}>

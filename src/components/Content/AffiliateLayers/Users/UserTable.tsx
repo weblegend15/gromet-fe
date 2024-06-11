@@ -21,6 +21,7 @@ interface User {
 
 type Props = {
   users: User[];
+  categories: string[];
   DeleteById: (id: string) => void;
   verifyPhone: (id: string) => void;
   getAllUsers: () => void;
@@ -31,11 +32,11 @@ const UserTables: React.FC<Props> = ({
   DeleteById,
   verifyPhone,
   getAllUsers,
+  categories,
 }) => {
   const [data, setData] = useState<User[]>([]);
 
   const handleUpdate = async (updatedUser: User) => {
-    console.log(updatedUser);
     const token: string | null = localStorage.getItem("accessToken");
     if (token) {
       const header = {
@@ -115,7 +116,11 @@ const UserTables: React.FC<Props> = ({
       dataIndex: "delete",
       render: (v: string, val: User) => (
         <ButtonGroup>
-          <EditModal user={val} onUpdate={handleUpdate} />
+          <EditModal
+            user={val}
+            onUpdate={handleUpdate}
+            categories={categories}
+          />
           <Button size="middle" onClick={() => DeleteById(val.key)}>
             Delete
           </Button>
