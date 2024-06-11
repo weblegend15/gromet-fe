@@ -91,7 +91,10 @@ const Login = ({ setAccount }) => {
           } else if (res.status === 200) {
             localStorage.setItem("accessToken", res.data.accessToken);
             localStorage.setItem("currentUser", res.data.data.roles);
-            sessionStorage.setItem("rebate", res.data.data.rebate);
+            sessionStorage.setItem(
+              "rebate",
+              JSON.stringify(res.data.data.rebate)
+            );
             localStorage.setItem("userEmail", user.email);
             navigate("/", { replace: true });
             setAccount(false);

@@ -16,7 +16,7 @@ interface User {
   roles: string;
   createdAt: string;
   delete: string;
-  rebate: Number;
+  rebate: object;
 }
 
 type Props = {
@@ -100,6 +100,7 @@ const UserTables: React.FC<Props> = ({
       title: "Rebate",
       dataIndex: "rebate",
       key: "rebate",
+      render: (v) => (v.length ? v[0].value : 0),
     },
 
     {

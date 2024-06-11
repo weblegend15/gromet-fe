@@ -17,9 +17,17 @@ interface Props {
 const OrderSide = ({ product, value }: Props) => {
   const [open, setOpen] = useState(false);
   const [carts, setCarts] = useState([]);
-  const [rebate, setRebate] = useState<number>(
-    Number(sessionStorage.getItem("rebate"))
-  );
+  const [rebate, setRebate] = useState<number>(0);
+
+  useEffect(() => {
+    const temp = JSON.parse(String(sessionStorage.getItem("rebate")));
+    const category = product.kategorija_artikla;
+    temp.forEach((v: any) => {
+      if (v.category == category) {
+        setRebate(v.value);
+      }
+    });
+  }, []);
   const imagePath = getImagePath(product as Product);
 
   const imageSrc = `${baseApi}/assets/products/` + imagePath + ".webp";
@@ -151,14 +159,14 @@ const OrderSide = ({ product, value }: Props) => {
                     />
                     <div style={{ width: "100%" }}>
                       <div style={{ margin: "5px" }}>
-                        {v.itemNum.naziv_artikla}
+                        {v.itemNum?.naziv_artikla}
                       </div>
                       <div style={{ margin: "5px" }}>
                         <b>Količina:</b> {v.count}
                       </div>
                       <div style={{ margin: "5px" }}>
                         <b>Ukupna vrednost bez PDV-a:</b>{" "}
-                        {(v.count * v.itemNum.price * (100 - rebate)) / 100}
+                        {(v.count * v.itemNum?.price * (100 - rebate)) / 100}
                       </div>
                     </div>
                   </div>

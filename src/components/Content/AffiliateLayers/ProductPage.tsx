@@ -6,7 +6,7 @@ import {
   MinusOutlined,
   PlusOutlined,
 } from "@ant-design/icons";
-import { Input, Row, Space, Tabs, TabsProps } from "antd";
+import { Input, Row, Space, Spin, Tabs, TabsProps } from "antd";
 import { Button, Radio, Dropdown } from "antd";
 import type { MenuProps } from "antd";
 import { useBreadCrumbsUpdateContext } from "./Context/BreadCrumbsContext";
@@ -147,9 +147,18 @@ function ProductPage() {
   const [productsList, setProductList] = useState<Product[]>([]); //useState([]);//useState([...products]);
 
   const [product, setProduct] = useState<Product>({} as Product);
-  const [rebate, setRebate] = useState<Number>(
-    Number(sessionStorage.getItem("rebate"))
-  );
+  const [rebate, setRebate] = useState<Number>(0);
+  const [loading, setRoading] = useState(false);
+
+  useEffect(() => {
+    const temp = JSON.parse(String(sessionStorage.getItem("rebate")));
+    const category = product.kategorija_artikla;
+    temp.forEach((v: any) => {
+      if (v.category == category) {
+        setRebate(v.value);
+      }
+    });
+  }, []);
 
   const myRef = useRef<HTMLDivElement>(null);
   let currentproductcount = product.count;
@@ -196,6 +205,7 @@ function ProductPage() {
   };
   const fetchProducts = async () => {
     try {
+      setRoading(true);
       const token: string | null = localStorage.getItem("accessToken");
       if (token) {
         return await axios
@@ -205,9 +215,13 @@ function ProductPage() {
             },
           })
           .then((res) => {
+            setRoading(false);
             return res.data.data;
           })
-          .catch((err) => {});
+          .catch((err) => {
+            console.log(err);
+            setRoading(false);
+          });
       }
     } catch (error) {
       console.error("Error fetching products:", error);
@@ -307,7 +321,7 @@ function ProductPage() {
       );
 
       if (product) {
-        document.title = product.naziv_artikla;
+        document.title = product?.naziv_artikla;
         // setTimeout(() => {
         setProduct(product as Product);
         setMini_val(product.minimalno_pakovanje);
@@ -913,632 +927,651 @@ function ProductPage() {
           content={`${baseApi}/assets/products/` + zoomImagePath + ".webp"}
         />
       </Helmet>
-      {/* { openPhotoSwipe &&  */}
-      {product && product.slike && (
-        <Lightbox
-          animation={{ swipe: 0, zoom: 3 }}
-          open={openPhotoSwipe}
-          close={() => setOpenPhotoSwipe(false)}
-          carousel={{ preload: 1, finite: true }}
-          slides={
-            Array.isArray(product.slike) && !product.slike[0].includes(",")
-              ? [
-                  {
-                    src: (ref1?.current?.childNodes[0].childNodes[0] as any)
-                      ?.src,
-                  },
-                  ...product.slike.map((img: any, index: number) => {
-                    return {
-                      src: "${baseApi}/assets/products/" + img + ".webp",
-                    };
-                  }),
-                ]
-              : Array.isArray(product.slike) && product.slike[0].includes(",")
-              ? product.slike
-                  .map((item) => {
-                    return item.split(",").map((subitem) => {
-                      return {
-                        src: `${baseApi}/assets/products/` + subitem + ".webp",
-                      };
-                    });
-                  })
-                  .flat()
-              : !Array.isArray(product.slike) &&
-                product?.slike &&
-                product?.slike?.includes(",")
-              ? [
-                  ...product?.slike
-                    ?.split(",")
-                    .map((img: any, index: number) => {
-                      return {
-                        src: `${baseApi}/assets/products/` + img + ".webp",
-                      };
-                    }),
-                ]
-              : [
-                  {
-                    src:
-                      `${baseApi}/assets/products/` + zoomImagePath + ".webp",
-                  },
-                ]
-          }
-          plugins={[Counter, Slideshow, Zoom, Thumbnails]}
-          zoom={{ ref: zoomRef, zoomInMultiplier: 10, scrollToZoom: true }}
-          thumbnails={{
-            ref: thumbnailsRef,
-            position: "bottom",
-            width: 80,
-            height: 120,
-            border: 1,
-            borderRadius: 4,
-            padding: 4,
-            gap: 16,
-            showToggle: false,
-          }}
-          slideshow={{ autoplay: false }}
-          on={{
-            click: () => {},
-          }}
-        />
-      )}
 
-      {!openPhotoSwipe && (
-        <>
-          <div className="productPageProductContainer">
-            {/* left side of product page top level section */}
-            <div className="divProductContainer">
-              <div className="divProductImgSelected" ref={ref1}>
-                <LazyLoadImage
-                  effect="blur"
-                  id={"productShowcaseImage"}
-                  onClick={() => {
-                    hideBackToTop(true);
-                    setOpenPhotoSwipe(true);
-                  }}
-                  alt={product?.naziv_artikla}
-                  src={
-                    Array.isArray(product?.slike)
-                      ? `${baseApi}/assets/products/` +
-                        getImagePath(product, dimensionChosen) +
-                        ".webp"
-                      : imageSrc
-                  }
-                  onContextMenu={() => {
-                    return false;
-                  }}
-                />
-              </div>
+      {loading ? (
+        <Spin tip="Loading...">
+          <div style={{ height: "100vh" }} />
+        </Spin>
+      ) : (
+        <div>
+          {/* { openPhotoSwipe &&  */}
+          {product && product.slike && (
+            <Lightbox
+              animation={{ swipe: 0, zoom: 3 }}
+              open={openPhotoSwipe}
+              close={() => setOpenPhotoSwipe(false)}
+              carousel={{ preload: 1, finite: true }}
+              slides={
+                Array.isArray(product.slike) && !product.slike[0].includes(",")
+                  ? [
+                      {
+                        src: (ref1?.current?.childNodes[0].childNodes[0] as any)
+                          ?.src,
+                      },
+                      ...product.slike.map((img: any, index: number) => {
+                        return {
+                          src: "${baseApi}/assets/products/" + img + ".webp",
+                        };
+                      }),
+                    ]
+                  : Array.isArray(product.slike) &&
+                    product.slike[0].includes(",")
+                  ? product.slike
+                      .map((item) => {
+                        return item.split(",").map((subitem) => {
+                          return {
+                            src:
+                              `${baseApi}/assets/products/` + subitem + ".webp",
+                          };
+                        });
+                      })
+                      .flat()
+                  : !Array.isArray(product.slike) &&
+                    product?.slike &&
+                    product?.slike?.includes(",")
+                  ? [
+                      ...product?.slike
+                        ?.split(",")
+                        .map((img: any, index: number) => {
+                          return {
+                            src: `${baseApi}/assets/products/` + img + ".webp",
+                          };
+                        }),
+                    ]
+                  : [
+                      {
+                        src:
+                          `${baseApi}/assets/products/` +
+                          zoomImagePath +
+                          ".webp",
+                      },
+                    ]
+              }
+              plugins={[Counter, Slideshow, Zoom, Thumbnails]}
+              zoom={{ ref: zoomRef, zoomInMultiplier: 10, scrollToZoom: true }}
+              thumbnails={{
+                ref: thumbnailsRef,
+                position: "bottom",
+                width: 80,
+                height: 120,
+                border: 1,
+                borderRadius: 4,
+                padding: 4,
+                gap: 16,
+                showToggle: false,
+              }}
+              slideshow={{ autoplay: false }}
+              on={{
+                click: () => {},
+              }}
+            />
+          )}
 
-              <div className="small-products-images divSmallProductImagesModelViseSlika">
-                {product?.model_vise_slika === "TRUE" &&
-                  Array.isArray(product.slike) &&
-                  product.slike.map((imageCVS) => {
-                    //console.log("IMAGECVS:", imageCVS)
-                    return imageCVS.split(",").map((slike: string, index) => {
-                      return (
+          {!openPhotoSwipe && (
+            <>
+              <div className="productPageProductContainer">
+                {/* left side of product page top level section */}
+                <div className="divProductContainer">
+                  <div className="divProductImgSelected" ref={ref1}>
+                    <LazyLoadImage
+                      effect="blur"
+                      id={"productShowcaseImage"}
+                      onClick={() => {
+                        hideBackToTop(true);
+                        setOpenPhotoSwipe(true);
+                      }}
+                      alt={product?.naziv_artikla}
+                      src={
+                        Array.isArray(product?.slike)
+                          ? `${baseApi}/assets/products/` +
+                            getImagePath(product, dimensionChosen) +
+                            ".webp"
+                          : imageSrc
+                      }
+                      onContextMenu={() => {
+                        return false;
+                      }}
+                    />
+                  </div>
+
+                  <div className="small-products-images divSmallProductImagesModelViseSlika">
+                    {product?.model_vise_slika === "TRUE" &&
+                      Array.isArray(product.slike) &&
+                      product.slike.map((imageCVS) => {
+                        //console.log("IMAGECVS:", imageCVS)
+                        return imageCVS
+                          .split(",")
+                          .map((slike: string, index) => {
+                            return (
+                              <div
+                                key={slike + index}
+                                id={slike + index}
+                                data-index={index}
+                                className={`divProductImg ${
+                                  index === dimensionChosen
+                                    ? "divProductImgSelectedThumbnail"
+                                    : ""
+                                }`}
+                                onClick={(e) => {
+                                  handleProductImgThumbnailSelected(e.target);
+                                }}
+                              >
+                                <LazyLoadImage
+                                  effect="blur"
+                                  alt={product?.naziv_artikla}
+                                  src={
+                                    `${baseApi}/assets/products/` +
+                                    getImagePath(
+                                      { ...product, slike: slike } as Product,
+                                      index
+                                    ) +
+                                    ".webp"
+                                  }
+                                />
+                              </div>
+                            );
+                          });
+                      })}
+
+                    {/* not array and no comma seperated values => grab base img */}
+                    {product?.model_vise_slika !== "TRUE" &&
+                      !Array.isArray(product?.slike) &&
+                      product?.slike &&
+                      !product?.slike?.includes(",") && (
                         <div
-                          key={slike + index}
-                          id={slike + index}
-                          data-index={index}
-                          className={`divProductImg ${
-                            index === dimensionChosen
-                              ? "divProductImgSelectedThumbnail"
-                              : ""
-                          }`}
-                          onClick={(e) => {
-                            handleProductImgThumbnailSelected(e.target);
-                          }}
+                          className="divProductImg divProductImgSelectedThumbnail"
+                          style={{ border: "2px solid #004d8c" }}
                         >
                           <LazyLoadImage
                             effect="blur"
+                            onClick={() => {}}
                             alt={product?.naziv_artikla}
-                            src={
-                              `${baseApi}/assets/products/` +
-                              getImagePath(
-                                { ...product, slike: slike } as Product,
-                                index
-                              ) +
-                              ".webp"
-                            }
+                            src={imageSrc}
+                            onContextMenu={() => {
+                              return false;
+                            }}
                           />
                         </div>
-                      );
-                    });
-                  })}
-
-                {/* not array and no comma seperated values => grab base img */}
-                {product?.model_vise_slika !== "TRUE" &&
-                  !Array.isArray(product?.slike) &&
-                  product?.slike &&
-                  !product?.slike?.includes(",") && (
-                    <div
-                      className="divProductImg divProductImgSelectedThumbnail"
-                      style={{ border: "2px solid #004d8c" }}
-                    >
-                      <LazyLoadImage
-                        effect="blur"
-                        onClick={() => {}}
-                        alt={product?.naziv_artikla}
-                        src={imageSrc}
-                        onContextMenu={() => {
-                          return false;
-                        }}
-                      />
-                    </div>
-                  )}
-                {/* not array and HAS comma seperated values => split ',' and get imagePaths */}
-                {product?.model_vise_slika !== "TRUE" &&
-                  !Array.isArray(product?.slike) &&
-                  product?.slike?.includes(",") &&
-                  product?.slike?.split(",").map((slike: string, index) => {
-                    return (
-                      <div
-                        key={slike + index}
-                        id={slike + index}
-                        data-index={index}
-                        className={`divProductImg ${
-                          index === dimensionChosen
-                            ? "divProductImgSelectedThumbnail"
-                            : ""
-                        }`}
-                        onClick={(e) => {
-                          handleProductImgThumbnailSelected(e.target);
-                        }}
-                      >
-                        <LazyLoadImage
-                          effect="blur"
-                          alt={product?.naziv_artikla}
-                          src={
-                            `${baseApi}/assets/products/` +
-                            getImagePath(product as Product, index) +
-                            ".webp"
-                          }
-                        />
-                      </div>
-                    );
-                  })}
-                {/* HAS array of product pictures => map each one to a small img div and get img path*/}
-                {product?.model_vise_slika !== "TRUE" &&
-                  Array.isArray(product.slike) &&
-                  product.slike.map((slike: string, index) => {
-                    return (
-                      <div
-                        key={slike + index}
-                        id={slike + index}
-                        data-index={index}
-                        className={`divProductImg ${
-                          index === dimensionChosen
-                            ? "divProductImgSelectedThumbnail"
-                            : ""
-                        }`}
-                        onClick={(e) => {
-                          handleProductImgThumbnailSelected(e.target);
-                        }}
-                      >
-                        <LazyLoadImage
-                          effect="blur"
-                          alt={product?.naziv_artikla}
-                          src={
-                            `${baseApi}/assets/products/` +
-                            getImagePath(product as Product, index) +
-                            ".webp"
-                          }
-                        />
-                      </div>
-                    );
-                  })}
-              </div>
-            </div>
-
-            {/* right side of product page top level section */}
-            <div className="productPageDescriptionContainer">
-              <div className="productPageDescription">
-                <div className="productPageShareIconLabel">
-                  <Dropdown
-                    menu={{
-                      items:
-                        window.innerWidth > 1000
-                          ? [
-                              ...shareButtonItems.filter(
-                                (el) => el?.key !== "3"
-                              ),
-                            ]
-                          : [...shareButtonItems],
-                    }}
-                    placement="bottom"
-                    arrow
-                    open={showShare}
-                  >
-                    <button
-                      className="productPageShareIconLabelButton"
-                      onClick={() => setShowShare(!showShare)}
-                    >
-                      Podeli
-                      <LazyLoadImage
-                        effect="blur"
-                        className="productPageShareIcon"
-                        src="https://www.freeiconspng.com/thumbs/www-icon/vector-illustration-of-simple-share-icon--public-domain-vectors-23.png"
-                      />
-                    </button>
-                  </Dropdown>
-                </div>
-                <h1>{product.naziv_artikla}</h1>
-                <span
-                  className="singleProductPageDescription"
-                  style={{ marginBottom: "20px" }}
-                >
-                  Kategorija:{" "}
-                  <a
-                    style={{ marginLeft: "5px" }}
-                    onClick={() => {
-                      handleShopRedirect();
-                    }}
-                  >
-                    {product?.kategorija_artikla}
-                  </a>
-                </span>
-
-                <span
-                  className="singleProductPageDescription"
-                  style={{ marginBottom: "0px" }}
-                >
-                  {localStorage.getItem("currentUser") === "ADMIN" && (
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "row",
-                        alignItems: "center",
-                      }}
-                    >
-                      Računati:
-                      <div style={{ marginLeft: "8px", alignItems: "center" }}>
-                        {currentproductcount}
-                      </div>
-                    </div>
-                  )}
-                </span>
-                <div>
-                  <span
-                    className="singleProductPageDescription"
-                    style={{
-                      display: Array.isArray(product.meta_description)
-                        ? "flex"
-                        : product?.meta_description?.length > 10
-                        ? "flex"
-                        : "none",
-                    }}
-                  >
-                    {Array.isArray(product.meta_description)
-                      ? product.meta_description[dimensionChosen]
-                      : product.meta_description}
-                  </span>
-                  {product?.prosireni_opis?.length && (
-                    <>
-                      <br />
-                    </>
-                  )}
-                  <span
-                    className="singleProductPageDescription"
-                    style={{
-                      display:
-                        Array.isArray(product.prosireni_opis) ||
-                        (!Array.isArray(product.prosireni_opis) &&
-                          product?.prosireni_opis?.length > 10)
-                          ? "flex"
-                          : "none",
-                    }}
-                  >
-                    {Array.isArray(product.prosireni_opis)
-                      ? product.prosireni_opis[dimensionChosen]
-                      : product.prosireni_opis}
-                    {/* {product.prosireni_opis} */}
-                  </span>
-                  <a
-                    className="aTagScrollToSpecifications"
-                    style={{ cursor: "pointer" }}
-                    onClick={() => executeScroll()}
-                  >
-                    Saznaj više o proizvodu
-                  </a>
-                  <ul className="product__meta">
-                    <li className="product__meta-availability">
-                      Šifra artikla:
-                      <span className="text-success">
-                        {Array.isArray(product.sifra_proizvoda)
-                          ? product.sifra_proizvoda[dimensionChosen]
-                          : product.sifra_proizvoda}
-                      </span>
-                    </li>
-                    <li style={{ textAlign: "right" }}>
-                      Minimalno pakovanje:{" "}
-                      {Array.isArray(product.minimalno_pakovanje)
-                        ? product.minimalno_pakovanje[dimensionChosen]
-                        : product.minimalno_pakovanje}
-                    </li>
-                    <li>
-                      Jedinica mere:{" "}
-                      {Array.isArray(product.jedinica_mere)
-                        ? product.jedinica_mere[dimensionChosen]
-                        : product.jedinica_mere}
-                    </li>
-                    <li style={{ textAlign: "right" }}>
-                      Transportno pakovanje:{" "}
-                      {Array.isArray(product.transportno_pakovanje)
-                        ? product.transportno_pakovanje[dimensionChosen]
-                        : product.transportno_pakovanje}
-                    </li>
-                  </ul>
-                  {product?.naziv_proizvoda_model !== "/" && (
-                    <>
-                      <br></br>
-                      <label
-                        style={{
-                          paddingBottom: "10px",
-                          display: "inline-block",
-                          textTransform: "uppercase",
-                          fontWeight: "600",
-                        }}
-                      >
-                        Model:
-                      </label>
-                      <Row>
-                        {product?.naziv_proizvoda_model && (
-                          <Radio.Group
-                            onChange={(e) => setDimensionIndex(e)}
-                            defaultValue={
-                              product.sifra_proizvoda.indexOf(
-                                window.location.hash.substring(1)
-                              ) !== -1
-                                ? product.sifra_proizvoda[dimensionChosen]
-                                : 0
-                            }
-                            value={dimensionChosen}
-                            buttonStyle="solid"
-                            style={{ borderRadius: "0px !important" }}
+                      )}
+                    {/* not array and HAS comma seperated values => split ',' and get imagePaths */}
+                    {product?.model_vise_slika !== "TRUE" &&
+                      !Array.isArray(product?.slike) &&
+                      product?.slike?.includes(",") &&
+                      product?.slike?.split(",").map((slike: string, index) => {
+                        return (
+                          <div
+                            key={slike + index}
+                            id={slike + index}
+                            data-index={index}
+                            className={`divProductImg ${
+                              index === dimensionChosen
+                                ? "divProductImgSelectedThumbnail"
+                                : ""
+                            }`}
+                            onClick={(e) => {
+                              handleProductImgThumbnailSelected(e.target);
+                            }}
                           >
-                            {product.naziv_proizvoda_model &&
-                            Array.isArray(product.naziv_proizvoda_model) ? (
-                              product.naziv_proizvoda_model.map(
-                                (dimension, index) => {
-                                  const longest = Math.max(
-                                    ...(
-                                      product.naziv_proizvoda_model as Array<string>
-                                    ).map((el) => el.length)
-                                  );
-                                  return (
+                            <LazyLoadImage
+                              effect="blur"
+                              alt={product?.naziv_artikla}
+                              src={
+                                `${baseApi}/assets/products/` +
+                                getImagePath(product as Product, index) +
+                                ".webp"
+                              }
+                            />
+                          </div>
+                        );
+                      })}
+                    {/* HAS array of product pictures => map each one to a small img div and get img path*/}
+                    {product?.model_vise_slika !== "TRUE" &&
+                      Array.isArray(product.slike) &&
+                      product.slike.map((slike: string, index) => {
+                        return (
+                          <div
+                            key={slike + index}
+                            id={slike + index}
+                            data-index={index}
+                            className={`divProductImg ${
+                              index === dimensionChosen
+                                ? "divProductImgSelectedThumbnail"
+                                : ""
+                            }`}
+                            onClick={(e) => {
+                              handleProductImgThumbnailSelected(e.target);
+                            }}
+                          >
+                            <LazyLoadImage
+                              effect="blur"
+                              alt={product?.naziv_artikla}
+                              src={
+                                `${baseApi}/assets/products/` +
+                                getImagePath(product as Product, index) +
+                                ".webp"
+                              }
+                            />
+                          </div>
+                        );
+                      })}
+                  </div>
+                </div>
+
+                {/* right side of product page top level section */}
+                <div className="productPageDescriptionContainer">
+                  <div className="productPageDescription">
+                    <div className="productPageShareIconLabel">
+                      <Dropdown
+                        menu={{
+                          items:
+                            window.innerWidth > 1000
+                              ? [
+                                  ...shareButtonItems.filter(
+                                    (el) => el?.key !== "3"
+                                  ),
+                                ]
+                              : [...shareButtonItems],
+                        }}
+                        placement="bottom"
+                        arrow
+                        open={showShare}
+                      >
+                        <button
+                          className="productPageShareIconLabelButton"
+                          onClick={() => setShowShare(!showShare)}
+                        >
+                          Podeli
+                          <LazyLoadImage
+                            effect="blur"
+                            className="productPageShareIcon"
+                            src="https://www.freeiconspng.com/thumbs/www-icon/vector-illustration-of-simple-share-icon--public-domain-vectors-23.png"
+                          />
+                        </button>
+                      </Dropdown>
+                    </div>
+                    <h1>{product.naziv_artikla}</h1>
+                    <span
+                      className="singleProductPageDescription"
+                      style={{ marginBottom: "20px" }}
+                    >
+                      Kategorija:
+                      <a
+                        style={{ marginLeft: "5px" }}
+                        onClick={() => {
+                          handleShopRedirect();
+                        }}
+                      >
+                        {product?.kategorija_artikla}
+                      </a>
+                    </span>
+
+                    <span
+                      className="singleProductPageDescription"
+                      style={{ marginBottom: "0px" }}
+                    >
+                      {localStorage.getItem("currentUser") === "ADMIN" && (
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "row",
+                            alignItems: "center",
+                          }}
+                        >
+                          Računati:
+                          <div
+                            style={{ marginLeft: "8px", alignItems: "center" }}
+                          >
+                            {currentproductcount}
+                          </div>
+                        </div>
+                      )}
+                    </span>
+                    <div>
+                      <span
+                        className="singleProductPageDescription"
+                        style={{
+                          display: Array.isArray(product.meta_description)
+                            ? "flex"
+                            : product?.meta_description?.length > 10
+                            ? "flex"
+                            : "none",
+                        }}
+                      >
+                        {Array.isArray(product.meta_description)
+                          ? product.meta_description[dimensionChosen]
+                          : product.meta_description}
+                      </span>
+                      {product?.prosireni_opis?.length && (
+                        <>
+                          <br />
+                        </>
+                      )}
+                      <span
+                        className="singleProductPageDescription"
+                        style={{
+                          display:
+                            Array.isArray(product.prosireni_opis) ||
+                            (!Array.isArray(product.prosireni_opis) &&
+                              product?.prosireni_opis?.length > 10)
+                              ? "flex"
+                              : "none",
+                        }}
+                      >
+                        {Array.isArray(product.prosireni_opis)
+                          ? product.prosireni_opis[dimensionChosen]
+                          : product.prosireni_opis}
+                        {/* {product.prosireni_opis} */}
+                      </span>
+                      <a
+                        className="aTagScrollToSpecifications"
+                        style={{ cursor: "pointer" }}
+                        onClick={() => executeScroll()}
+                      >
+                        Saznaj više o proizvodu
+                      </a>
+                      <ul className="product__meta">
+                        <li className="product__meta-availability">
+                          Šifra artikla:
+                          <span className="text-success">
+                            {Array.isArray(product.sifra_proizvoda)
+                              ? product.sifra_proizvoda[dimensionChosen]
+                              : product.sifra_proizvoda}
+                          </span>
+                        </li>
+                        <li style={{ textAlign: "right" }}>
+                          Minimalno pakovanje:{" "}
+                          {Array.isArray(product.minimalno_pakovanje)
+                            ? product.minimalno_pakovanje[dimensionChosen]
+                            : product.minimalno_pakovanje}
+                        </li>
+                        <li>
+                          Jedinica mere:{" "}
+                          {Array.isArray(product.jedinica_mere)
+                            ? product.jedinica_mere[dimensionChosen]
+                            : product.jedinica_mere}
+                        </li>
+                        <li style={{ textAlign: "right" }}>
+                          Transportno pakovanje:{" "}
+                          {Array.isArray(product.transportno_pakovanje)
+                            ? product.transportno_pakovanje[dimensionChosen]
+                            : product.transportno_pakovanje}
+                        </li>
+                      </ul>
+                      {product?.naziv_proizvoda_model !== "/" && (
+                        <>
+                          <br></br>
+                          <label
+                            style={{
+                              paddingBottom: "10px",
+                              display: "inline-block",
+                              textTransform: "uppercase",
+                              fontWeight: "600",
+                            }}
+                          >
+                            Model:
+                          </label>
+                          <Row>
+                            {product?.naziv_proizvoda_model && (
+                              <Radio.Group
+                                onChange={(e) => setDimensionIndex(e)}
+                                defaultValue={
+                                  product.sifra_proizvoda.indexOf(
+                                    window.location.hash.substring(1)
+                                  ) !== -1
+                                    ? product.sifra_proizvoda[dimensionChosen]
+                                    : 0
+                                }
+                                value={dimensionChosen}
+                                buttonStyle="solid"
+                                style={{ borderRadius: "0px !important" }}
+                              >
+                                {product.naziv_proizvoda_model &&
+                                Array.isArray(product.naziv_proizvoda_model) ? (
+                                  product.naziv_proizvoda_model.map(
+                                    (dimension, index) => {
+                                      const longest = Math.max(
+                                        ...(
+                                          product.naziv_proizvoda_model as Array<string>
+                                        ).map((el) => el.length)
+                                      );
+                                      return (
+                                        <Radio.Button
+                                          id={index.toString()}
+                                          key={index}
+                                          style={{
+                                            borderRadius: "0px !important",
+                                            marginRight: "5px",
+                                            marginBottom: "5px",
+                                            backgroundColor: "#f0f0f0",
+                                            width:
+                                              longest && longest > 20
+                                                ? "190px"
+                                                : longest && longest > 15
+                                                ? "189px"
+                                                : longest && longest > 10
+                                                ? "150px"
+                                                : longest && longest > 5
+                                                ? "120px"
+                                                : "70px",
+                                          }}
+                                          value={index}
+                                        >
+                                          {dimension}
+                                        </Radio.Button>
+                                      );
+                                    }
+                                  )
+                                ) : (
+                                  <>
                                     <Radio.Button
-                                      id={index.toString()}
-                                      key={index}
                                       style={{
                                         borderRadius: "0px !important",
-                                        marginRight: "5px",
-                                        marginBottom: "5px",
                                         backgroundColor: "#f0f0f0",
-                                        width:
-                                          longest && longest > 20
-                                            ? "190px"
-                                            : longest && longest > 15
-                                            ? "189px"
-                                            : longest && longest > 10
-                                            ? "150px"
-                                            : longest && longest > 5
-                                            ? "120px"
-                                            : "70px",
                                       }}
-                                      value={index}
+                                      value="0"
                                     >
-                                      {dimension}
+                                      {product.naziv_proizvoda_model}
                                     </Radio.Button>
-                                  );
-                                }
-                              )
-                            ) : (
-                              <>
-                                <Radio.Button
-                                  style={{
-                                    borderRadius: "0px !important",
-                                    backgroundColor: "#f0f0f0",
-                                  }}
-                                  value="0"
-                                >
-                                  {product.naziv_proizvoda_model}
-                                </Radio.Button>
-                              </>
+                                  </>
+                                )}
+                              </Radio.Group>
                             )}
-                          </Radio.Group>
-                        )}
-                      </Row>
-                      <br />
-                    </>
-                  )}
+                          </Row>
+                          <br />
+                        </>
+                      )}
 
-                  <div
-                    className="divAdditionalDescription"
-                    style={{ borderTop: "0px" }}
-                  ></div>
-
-                  <div style={{ display: "flex", padding: "20px" }}>
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "row",
-                        alignItems: "center",
-                        textDecoration: "line-through",
-                        opacity: 0.6,
-                        fontSize: "20px",
-                        fontWeight: "700",
-                      }}
-                    >
-                      <div style={{ marginLeft: "8px", alignItems: "center" }}>
-                        VP cena: {product.price}
-                      </div>
-                    </div>
-
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "row",
-                        alignItems: "center",
-                        fontSize: "20px",
-                        fontWeight: "700",
-                        marginLeft: "70px",
-                      }}
-                    >
-                      Neto cena:
                       <div
-                        style={{
-                          marginLeft: "8px",
-                          alignItems: "center",
-                          color: "#ce8410",
-                        }}
-                      >
-                        {(product.price * (100 - Number(rebate))) / 100} RSD
-                      </div>
-                    </div>
-                  </div>
+                        className="divAdditionalDescription"
+                        style={{ borderTop: "0px" }}
+                      ></div>
 
-                  <div style={{ display: "flex" }}>
-                    <div style={{ width: "70%" }}>
-                      <div
-                        style={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          margin: "5px 0px",
-                        }}
-                      >
-                        <span>Minimalno pakovanje:</span>
-                        <div style={{ display: "flex", gap: 5 }}>
-                          <Space>
-                            <Button
-                              onClick={decrementMini}
-                              icon={<MinusOutlined />}
-                              size="small"
-                            />
-                            <Input
-                              type="text"
-                              size="small"
-                              value={Mini_val}
-                              onChange={handleChangeMini}
-                              style={{ width: "40px", textAlign: "center" }}
-                            />
-                            <Button
-                              onClick={incrementMini}
-                              icon={<PlusOutlined />}
-                              size="small"
-                            />
-                          </Space>
-                          <OrderSide
-                            product={product as Product}
-                            value={Mini_val}
-                          />
+                      <div style={{ display: "flex", padding: "20px" }}>
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "row",
+                            alignItems: "center",
+                            textDecoration: "line-through",
+                            opacity: 0.6,
+                            fontSize: "20px",
+                            fontWeight: "700",
+                          }}
+                        >
+                          <div
+                            style={{ marginLeft: "8px", alignItems: "center" }}
+                          >
+                            VP cena: {product.price}
+                          </div>
+                        </div>
+
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "row",
+                            alignItems: "center",
+                            fontSize: "20px",
+                            fontWeight: "700",
+                            marginLeft: "70px",
+                          }}
+                        >
+                          Neto cena:
+                          <div
+                            style={{
+                              marginLeft: "8px",
+                              alignItems: "center",
+                              color: "#ce8410",
+                            }}
+                          >
+                            {(product.price * (100 - Number(rebate))) / 100} RSD
+                          </div>
                         </div>
                       </div>
-                      <div
-                        style={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          margin: "5px 0px",
-                        }}
-                      >
-                        <span>Transportno pakovanje:</span>
-                        <div style={{ display: "flex", gap: 5 }}>
-                          <Space>
-                            <Button
-                              onClick={decrementTrans}
-                              icon={<MinusOutlined />}
-                              size="small"
-                            />
-                            <Input
-                              type="text"
-                              size="small"
-                              value={Trans_val}
-                              onChange={handleChangeTrans}
-                              style={{ width: "40px", textAlign: "center" }}
-                            />
-                            <Button
-                              onClick={incrementTrans}
-                              icon={<PlusOutlined />}
-                              size="small"
-                            />
-                          </Space>
-                          <OrderSide
-                            product={product as Product}
-                            value={Trans_val}
-                          />
+
+                      <div style={{ display: "flex" }}>
+                        <div style={{ width: "70%" }}>
+                          <div
+                            style={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                              margin: "5px 0px",
+                            }}
+                          >
+                            <span>Minimalno pakovanje:</span>
+                            <div style={{ display: "flex", gap: 5 }}>
+                              <Space>
+                                <Button
+                                  onClick={decrementMini}
+                                  icon={<MinusOutlined />}
+                                  size="small"
+                                />
+                                <Input
+                                  type="text"
+                                  size="small"
+                                  value={Mini_val}
+                                  onChange={handleChangeMini}
+                                  style={{ width: "40px", textAlign: "center" }}
+                                />
+                                <Button
+                                  onClick={incrementMini}
+                                  icon={<PlusOutlined />}
+                                  size="small"
+                                />
+                              </Space>
+                              <OrderSide
+                                product={product as Product}
+                                value={Mini_val}
+                              />
+                            </div>
+                          </div>
+                          <div
+                            style={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                              margin: "5px 0px",
+                            }}
+                          >
+                            <span>Transportno pakovanje:</span>
+                            <div style={{ display: "flex", gap: 5 }}>
+                              <Space>
+                                <Button
+                                  onClick={decrementTrans}
+                                  icon={<MinusOutlined />}
+                                  size="small"
+                                />
+                                <Input
+                                  type="text"
+                                  size="small"
+                                  value={Trans_val}
+                                  onChange={handleChangeTrans}
+                                  style={{ width: "40px", textAlign: "center" }}
+                                />
+                                <Button
+                                  onClick={incrementTrans}
+                                  icon={<PlusOutlined />}
+                                  size="small"
+                                />
+                              </Space>
+                              <OrderSide
+                                product={product as Product}
+                                value={Trans_val}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                        <div
+                          style={{
+                            width: "30%",
+                            display: "flex",
+                            justifyContent: "flex-end",
+                            alignItems: "center",
+                          }}
+                        >
+                          <div
+                            style={{ marginLeft: "8px", alignItems: "right" }}
+                          >
+                            {product.count === 0 && (
+                              <div
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "space-between",
+                                  gap: 10,
+                                }}
+                              >
+                                <img
+                                  src="https://www.freeiconspng.com/uploads/red-circle-icon-1.png"
+                                  width={15}
+                                  alt="Red Circle"
+                                />
+                                <p>Minimalno na stanju</p>
+                              </div>
+                            )}
+                            {product.count > 0 && (
+                              <div
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "space-between",
+                                  gap: 10,
+                                }}
+                              >
+                                <img
+                                  src="https://www.freeiconspng.com/uploads/purple-circle-icon-5.png"
+                                  width={15}
+                                  height={15}
+                                  alt="Purple Circle"
+                                />
+                                <p>Nema na stanju</p>
+                              </div>
+                            )}
+                            {product.count > 5 && (
+                              <div
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "space-between",
+                                  gap: 10,
+                                }}
+                              >
+                                <img
+                                  src="https://www.freeiconspng.com/uploads/green-circle-icon-14.png"
+                                  width={15}
+                                  alt="Green Circle"
+                                />
+                                <p>Na stanju</p>
+                              </div>
+                            )}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <div
-                      style={{
-                        width: "30%",
-                        display: "flex",
-                        justifyContent: "flex-end",
-                        alignItems: "center",
-                      }}
-                    >
-                      <div style={{ marginLeft: "8px", alignItems: "right" }}>
-                        {product.count === 0 && (
-                          <div
-                            style={{
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "space-between",
-                              gap: 10,
-                            }}
-                          >
-                            <img
-                              src="https://www.freeiconspng.com/uploads/red-circle-icon-1.png"
-                              width={15}
-                              alt="Red Circle"
-                            />
-                            <p>Minimalno na stanju</p>
-                          </div>
-                        )}
-                        {product.count > 0 && (
-                          <div
-                            style={{
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "space-between",
-                              gap: 10,
-                            }}
-                          >
-                            <img
-                              src="https://www.freeiconspng.com/uploads/purple-circle-icon-5.png"
-                              width={15}
-                              height={15}
-                              alt="Purple Circle"
-                            />
-                            <p>Nema na stanju</p>
-                          </div>
-                        )}
-                        {product.count > 5 && (
-                          <div
-                            style={{
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "space-between",
-                              gap: 10,
-                            }}
-                          >
-                            <img
-                              src="https://www.freeiconspng.com/uploads/green-circle-icon-14.png"
-                              width={15}
-                              alt="Green Circle"
-                            />
-                            <p>Na stanju</p>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
 
-                  <OrderModal product={product} />
+                      {/* <OrderModal product={product} /> */}
 
-                  {/* <div className="divProductActionButtons">
-                    <label className="labelHowToOrder">Za pravna lica</label>
-                    <div className="divHowToOrderButtons">
-                      {localStorage.getItem("currentUser") === "USER" && (
+                      <div className="divProductActionButtons">
+                        {/* <label className="labelHowToOrder">Za pravna lica</label> */}
+                        <div className="divHowToOrderButtons">
+                          {/* {localStorage.getItem("currentUser") === "USER" && (
                         <Button
                           className="divProductActionQuantity"
                           onClick={() => {
@@ -1556,26 +1589,26 @@ function ProductPage() {
                             PORUČITE
                           </div>
                         </Button>
-                      )}
+                      )} */}
 
-                      {localStorage.getItem("currentUser") === "ADMIN" && (
-                        <Button
-                          className="divProductActionQuantity"
-                          onClick={() => {
-                            window.location.href = `/proizvod/edit${product.url}`;
-                          }}
-                        >
-                          <div
-                            className="divProductActionQuantityText"
-                            style={{
-                              backgroundColor: showFirmTip ? "#004d8c" : "",
-                            }}
-                          >
-                            EDIT
-                          </div>
-                        </Button>
-                      )}
-
+                          {localStorage.getItem("currentUser") === "ADMIN" && (
+                            <Button
+                              className="divProductActionQuantity"
+                              onClick={() => {
+                                window.location.href = `/proizvod/edit${product.url}`;
+                              }}
+                            >
+                              <div
+                                className="divProductActionQuantityText"
+                                style={{
+                                  backgroundColor: showFirmTip ? "#004d8c" : "",
+                                }}
+                              >
+                                EDIT
+                              </div>
+                            </Button>
+                          )}
+                          {/* 
                       <div
                         className="divShowFirmTip divResponsiveFirmTip"
                         style={
@@ -1616,67 +1649,69 @@ function ProductPage() {
                         >
                           Informacije za fizička lica
                         </div>
-                      </Button>
+                      </Button> */}
 
-                      <OrderModal product={product} />
+                          {localStorage.getItem("currentUser") === "ADMIN" && (
+                            <Button
+                              className="divProductActionQuantity"
+                              onClick={() => {
+                                console.log(product);
+                                try {
+                                  const token: string | null =
+                                    localStorage.getItem("accessToken");
+                                  if (token) {
+                                    const header = {
+                                      headers: {
+                                        Authorization: `Bearer ${token}`,
+                                      },
+                                    };
 
-                      {localStorage.getItem("currentUser") === "ADMIN" && (
-                        <Button
-                          className="divProductActionQuantity"
-                          onClick={() => {
-                            console.log(product);
-                            try {
-                              const token: string | null =
-                                localStorage.getItem("accessToken");
-                              if (token) {
-                                const header = {
-                                  headers: {
-                                    Authorization: `Bearer ${token}`,
-                                  },
-                                };
+                                    return axios
+                                      .post(
+                                        `${baseApi}/products/deleteProduct`,
+                                        { id: product._id },
+                                        header
+                                      )
+                                      .then((res) => {
+                                        alert("Deleted Successfully");
+                                        const fullUrl: string =
+                                          window.location.href;
+                                        console.log(fullUrl);
+                                        const indexSlash: number =
+                                          fullUrl.lastIndexOf("proizvod/");
+                                        console.log(indexSlash);
+                                        if (indexSlash !== -1) {
+                                          const baseUrl: string =
+                                            fullUrl.substring(
+                                              0,
+                                              indexSlash + "proizvod".length
+                                            );
+                                          window.location.href = baseUrl + "i/";
+                                        }
 
-                                return axios
-                                  .post(
-                                    `${baseApi}/products/deleteProduct`,
-                                    { id: product._id },
-                                    header
-                                  )
-                                  .then((res) => {
-                                    alert("Deleted Successfully");
-                                    const fullUrl: string =
-                                      window.location.href;
-                                    console.log(fullUrl);
-                                    const indexSlash: number =
-                                      fullUrl.lastIndexOf("proizvod/");
-                                    console.log(indexSlash);
-                                    if (indexSlash !== -1) {
-                                      const baseUrl: string = fullUrl.substring(
-                                        0,
-                                        indexSlash + "proizvod".length
-                                      );
-                                      window.location.href = baseUrl + "i/";
-                                    }
-
-                                    return res.data.data;
-                                  })
-                                  .catch((err) => {});
-                              }
-                            } catch (error) {
-                              console.error("Error create new product:", error);
-                            }
-                          }}
-                        >
-                          <div
-                            className="divProductActionQuantityText"
-                            style={{
-                              backgroundColor: showFirmTip ? "#004d8c" : "",
-                            }}
-                          >
-                            DELETE
-                          </div>
-                        </Button>
-                      )}
-                      <div
+                                        return res.data.data;
+                                      })
+                                      .catch((err) => {});
+                                  }
+                                } catch (error) {
+                                  console.error(
+                                    "Error create new product:",
+                                    error
+                                  );
+                                }
+                              }}
+                            >
+                              <div
+                                className="divProductActionQuantityText"
+                                style={{
+                                  backgroundColor: showFirmTip ? "#004d8c" : "",
+                                }}
+                              >
+                                DELETE
+                              </div>
+                            </Button>
+                          )}
+                          {/* <div
                         className="divShowFirmTip divShowPhysicalPersonTip"
                         style={
                           showPersonTip
@@ -1698,9 +1733,9 @@ function ProductPage() {
                             proizvode.
                           </li>
                         </ul>
-                      </div>
-                    </div>
-                    <span
+                      </div> */}
+                        </div>
+                        {/* <span
                       className="spanTroskoviIsporuke"
                       onClick={() => {
                         setShowShipmentTip(() => !showShipmentTip);
@@ -1739,11 +1774,10 @@ function ProductPage() {
                           Za detalje pozvati na 060/0768777
                         </li>
                       </ul>
-                    </div>
-                  </div> */}
-                  <div></div>
+                    </div> */}
+                      </div>
 
-                  {/* <span>Kolicina</span>
+                      {/* <span>Kolicina</span>
             <div className='divProductActionButtons'>
               <InputNumber className='divProductActionQuantity' min={1} controls={false} style={{textAlign: "center", justifyContent: "center", paddingLeft: "10px"}} addonBefore="-" addonAfter="+"  type={"number"} defaultValue={1}></InputNumber>
               <Button className='divProductActionQuantity' type='primary'>Dodaj u korpu</Button>
@@ -1754,100 +1788,108 @@ function ProductPage() {
               <BarChartOutlined className='divProductActionIcon' ref={ref3}/>
               </Tooltip>
             </div> */}
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
-          <div className="divProductTabsContainer" ref={myRef}>
-            <Tabs
-              defaultActiveKey="1"
-              items={SpecifikacijeJSX}
-              onChange={onChange}
-            />
-          </div>
+              <div className="divProductTabsContainer" ref={myRef}>
+                <Tabs
+                  defaultActiveKey="1"
+                  items={SpecifikacijeJSX}
+                  onChange={onChange}
+                />
+              </div>
 
-          {/* featured products */}
+              {/* featured products */}
 
-          <div
-            className="divFeaturedProductsContainer container"
-            style={{ marginBottom: "20px", minHeight: "400px" }}
-          >
-            {/* horizontal scroll list */}
-            <div
-              className="block-header"
-              style={{ width: "100%", height: "50px" }}
-            >
-              <h3 className="block-header__title">Povezani Proizvodi</h3>
-              <div className="block-header__divider"></div>
-              <>
-                <LeftOutlined id="btn-left" />
-                <RightOutlined id="btn-right" />
-              </>
-            </div>
-            <div className="divProductScrollContainer">
-              <Row style={{ width: "100%", flexWrap: "nowrap" }}>
-                {productsList
-                  .filter(
-                    (productItem) =>
-                      productItem.kategorija_artikla ===
-                      product.kategorija_artikla
-                  )
-                  .slice(0, 20)
-                  .map((product, index) => {
-                    const imagePath = getImagePath(product as Product);
-                    return (
-                      <ProductCard
-                        key={index}
-                        product={product as Product}
-                        picture={
-                          `${baseApi}/assets/products/` + imagePath + ".webp"
-                        } //pictures[index].picture}
-                        hideSticker={true}
-                      ></ProductCard>
-                    );
-                  })}
-              </Row>
-            </div>
-          </div>
+              <div
+                className="divFeaturedProductsContainer container"
+                style={{ marginBottom: "20px", minHeight: "400px" }}
+              >
+                {/* horizontal scroll list */}
+                <div
+                  className="block-header"
+                  style={{ width: "100%", height: "50px" }}
+                >
+                  <h3 className="block-header__title">Povezani Proizvodi</h3>
+                  <div className="block-header__divider"></div>
+                  <>
+                    <LeftOutlined id="btn-left" />
+                    <RightOutlined id="btn-right" />
+                  </>
+                </div>
+                <div className="divProductScrollContainer">
+                  <Row style={{ width: "100%", flexWrap: "nowrap" }}>
+                    {productsList
+                      .filter(
+                        (productItem) =>
+                          productItem.kategorija_artikla ===
+                          product.kategorija_artikla
+                      )
+                      .slice(0, 20)
+                      .map((product, index) => {
+                        const imagePath = getImagePath(product as Product);
+                        return (
+                          <ProductCard
+                            key={index}
+                            product={product as Product}
+                            picture={
+                              `${baseApi}/assets/products/` +
+                              imagePath +
+                              ".webp"
+                            } //pictures[index].picture}
+                            hideSticker={true}
+                          ></ProductCard>
+                        );
+                      })}
+                  </Row>
+                </div>
+              </div>
 
-          <div
-            className="divFeaturedProductsContainer container"
-            style={{ marginBottom: "20px", minHeight: "400px" }}
-          >
-            {/* horizontal scroll list */}
-            <div
-              className="block-header"
-              style={{ width: "100%", height: "50px" }}
-            >
-              <h3 className="block-header__title">Najprodavaniji Proizvodi</h3>
-              <div className="block-header__divider"></div>
-              <>
-                <LeftOutlined id="btn-left2" />
-                <RightOutlined id="btn-right2" />
-              </>
-            </div>
-            <div className="divProductScrollContainer divProductScrollContainer2">
-              <Row style={{ width: "100%", flexWrap: "nowrap" }}>
-                {[...productsList]
-                  .slice(0, 20)
-                  .reverse()
-                  .map((product, index) => {
-                    const imagePath = getImagePath(product as Product);
-                    return (
-                      <ProductCard
-                        key={index}
-                        product={product as Product}
-                        picture={
-                          `${baseApi}/assets/products/` + imagePath + ".webp"
-                        }
-                        // pictures[pictures.length - 4 - 1 - (index % 9)].picture
-                      ></ProductCard>
-                    );
-                  })}
-              </Row>
-            </div>
-          </div>
-        </>
+              <div
+                className="divFeaturedProductsContainer container"
+                style={{ marginBottom: "20px", minHeight: "400px" }}
+              >
+                {/* horizontal scroll list */}
+                <div
+                  className="block-header"
+                  style={{ width: "100%", height: "50px" }}
+                >
+                  <h3 className="block-header__title">
+                    Najprodavaniji Proizvodi
+                  </h3>
+                  <div className="block-header__divider"></div>
+                  <>
+                    <LeftOutlined id="btn-left2" />
+                    <RightOutlined id="btn-right2" />
+                  </>
+                </div>
+                <div className="divProductScrollContainer divProductScrollContainer2">
+                  <Row style={{ width: "100%", flexWrap: "nowrap" }}>
+                    {[...productsList]
+                      .slice(0, 20)
+                      .reverse()
+                      .map((product, index) => {
+                        const imagePath = getImagePath(product as Product);
+                        return (
+                          <ProductCard
+                            key={index}
+                            product={product as Product}
+                            picture={
+                              `${baseApi}/assets/products/` +
+                              imagePath +
+                              ".webp"
+                            }
+                            // pictures[pictures.length - 4 - 1 - (index % 9)].picture
+                          ></ProductCard>
+                        );
+                      })}
+                  </Row>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
       )}
     </div>
   );

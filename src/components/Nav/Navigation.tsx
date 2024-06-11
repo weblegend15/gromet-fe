@@ -44,10 +44,24 @@ function Navigation() {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResult, setSearchResult] = useState<string[]>([]);
   const [showSearchResultModal, setShowSearchResultModal] = useState(false);
+  const [bucketbadge, setBucketBadge] = useState(state.value);
   // const [displaySearch, setDisplaySearch] = useState(true);
 
   const [productsList, setProductList] = useState<any[]>([]); //useState([]);//useState([...products]);
   const [showSearch, setShowSearch] = useState(false);
+
+  useEffect(() => {
+    let token = localStorage.getItem("accessToken");
+    axios
+      .get(`${baseApi}/cart/getAllCartsWithID`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((res) => {
+        dispatch({ type: "SET_VALUE", payload: res.data.data.length });
+      });
+  }, []);
 
   useEffect(() => {
     let token = localStorage.getItem("accessToken");
@@ -240,12 +254,12 @@ function Navigation() {
                   localStorage.getItem("currentUser") === "USER" &&
                   text == "Dućan"
                 )
-                  return <></>;
+                  return <div key={text}></div>;
                 if (
                   localStorage.getItem("currentUser") === "USER" &&
                   text == "Users"
                 )
-                  return <></>;
+                  return <div key={text}></div>;
                 return (
                   <div
                     key={text}
