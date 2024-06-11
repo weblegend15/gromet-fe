@@ -158,7 +158,7 @@ function ProductPage() {
         setRebate(v.value);
       }
     });
-  }, []);
+  }, [product]);
 
   const myRef = useRef<HTMLDivElement>(null);
   let currentproductcount = product.count;

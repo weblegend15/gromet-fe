@@ -27,7 +27,7 @@ const OrderSide = ({ product, value }: Props) => {
         setRebate(v.value);
       }
     });
-  }, []);
+  }, [product]);
   const imagePath = getImagePath(product as Product);
 
   const imageSrc = `${baseApi}/assets/products/` + imagePath + ".webp";
