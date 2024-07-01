@@ -24,6 +24,7 @@ type Props = {
   categories: string[];
   DeleteById: (id: string) => void;
   verifyPhone: (id: string) => void;
+  verifyEmail: (id: string) => void;
   getAllUsers: () => void;
 };
 
@@ -31,6 +32,7 @@ const UserTables: React.FC<Props> = ({
   users,
   DeleteById,
   verifyPhone,
+  verifyEmail,
   getAllUsers,
   categories,
 }) => {
@@ -76,9 +78,19 @@ const UserTables: React.FC<Props> = ({
       title: "Email Status",
       dataIndex: "isEmailVerified",
       key: "isEmailVerified",
-      render: (v) => (
-        <Tag color={v ? "green" : "red"}>{v ? "Verified" : "Not Verified"}</Tag>
-      ),
+      render: (v, record) => {
+        return v ? (
+          <Tag color="green">Verified</Tag>
+        ) : (
+          <Button
+            size="small"
+            type="primary"
+            onClick={() => verifyEmail(record.email)}
+          >
+            Send SMS
+          </Button>
+        );
+      },
     },
     {
       title: "Phone Status",
@@ -91,9 +103,9 @@ const UserTables: React.FC<Props> = ({
           <Button
             size="small"
             type="primary"
-            onClick={() => verifyPhone(record.key)}
+            onClick={() => verifyPhone(record.email)}
           >
-            Verify
+            Verify {record.id}
           </Button>
         ),
     },
@@ -121,7 +133,7 @@ const UserTables: React.FC<Props> = ({
             onUpdate={handleUpdate}
             categories={categories}
           />
-          <Button size="middle" onClick={() => DeleteById(val.key)}>
+          <Button size="middle" onClick={() => DeleteById(val.email)}>
             Delete
           </Button>
         </ButtonGroup>

@@ -152,8 +152,10 @@ function ProductPage() {
 
   useEffect(() => {
     const temp = JSON.parse(String(sessionStorage.getItem("rebate")));
+    console.log(product);
     const category = product.kategorija_artikla;
     temp.forEach((v: any) => {
+      console.log("check", v.category, category, product.kategorija_artikla);
       if (v.category == category) {
         setRebate(v.value);
       }
@@ -336,12 +338,12 @@ function ProductPage() {
         }
       }
     });
-    // routeHistoryUpdate(["Pocetna", "Proizvodi", product?.name]);
+    // routeHistoryUpdate(["Početna", "Proizvodi", product?.name]);
 
     // }else{
     //   window.location.href = '/404';
     // }
-    routeHistoryUpdate(["Pocetna", "Proizvodi", product?.naziv_artikla]);
+    routeHistoryUpdate(["Početna", "Proizvodi", product?.naziv_artikla]);
   }, [window.location]);
 
   const getDimensionIndex = () => {
@@ -528,7 +530,7 @@ function ProductPage() {
                           : "flex",
                     }}
                   >
-                    <div className="spec__name">Precnik</div>
+                    <div className="spec__name">Prečnik</div>
                     <div className="spec__value">
                       {Array.isArray(product.precnik)
                         ? product.precnik[dimensionChosen]
@@ -571,7 +573,7 @@ function ProductPage() {
 
                 <div className="spec__section">
                   <h4 className="spec__section-title">
-                    Tehnicke specifikacije
+                    Tehničke specifikacije
                   </h4>
                   <div
                     className="spec__row"
@@ -671,7 +673,7 @@ function ProductPage() {
                           : "flex",
                     }}
                   >
-                    <div className="spec__name">Mesto i nacin skladištenja</div>
+                    <div className="spec__name">Mesto i način skladištenja</div>
                     <div className="spec__value">
                       {Array.isArray(product.mesto_i_nacin_skladistenja)
                         ? product.mesto_i_nacin_skladistenja[dimensionChosen]
@@ -722,10 +724,10 @@ function ProductPage() {
                   </div>
                 </div>
                 <div className="spec__disclaimer">
-                  Sve informacije o tehnickim karakteristikama i izgledu
+                  Sve informacije o tehničkim karakteristikama i izgledu
                   artikala su zasnovane na najnovijim podacima dostupnim u
                   trenutku objavljivanja. Stoga, ne možemo uvek garantovati
-                  potpunost i tacnost svih datih informacija.
+                  potpunost i tačnost svih datih informacija.
                 </div>
               </div>
             </div>
@@ -757,7 +759,7 @@ function ProductPage() {
     },
     {
       key: "3",
-      label: <label>Nacin ugradnje</label>,
+      label: <label>Način ugradnje</label>,
       children: (
         <>
           <div className="product-tabs__content">
@@ -765,7 +767,7 @@ function ProductPage() {
               <div className="spec">
                 <h3 className="spec__header">Uputstvo</h3>
                 <div className="spec__section">
-                  <h4 className="spec__section-title">Nacin</h4>
+                  <h4 className="spec__section-title">Način</h4>
                   <div className="spec__row">
                     <div className="spec__name">Ugradnja</div>
                     <div className="spec__value">{product.nacin_ugradnje}</div>
@@ -1217,7 +1219,7 @@ function ProductPage() {
                             alignItems: "center",
                           }}
                         >
-                          Racunati:
+                          Računati:
                           <div
                             style={{ marginLeft: "8px", alignItems: "center" }}
                           >
@@ -1589,7 +1591,7 @@ function ProductPage() {
                               backgroundColor: showFirmTip ? "#004d8c" : "",
                             }}
                           >
-                            PORUCITE
+                            PORUČITE
                           </div>
                         </Button>
                       )} */}
@@ -1650,7 +1652,7 @@ function ProductPage() {
                             wordBreak: "normal",
                           }}
                         >
-                          Informacije za fizicka lica
+                          Informacije za fizička lica
                         </div>
                       </Button> */}
 
@@ -1731,7 +1733,7 @@ function ProductPage() {
                               office@gromet.rs.
                             </a>{" "}
                             <br />
-                            Dobicete informaciju gde se nalaze naši partneri
+                            Dobićete informaciju gde se nalaze naši partneri
                             najbliži Vama kod kojih možete kupiti naše
                             proizvode.
                           </li>
@@ -1764,12 +1766,12 @@ function ProductPage() {
                       <ul>
                         <li>
                           1. BESPLATNA DOSTAVA našim vozilom za porudžbine preko
-                          20 000 dinara+pdv ili dodite licno po robu u neki od
+                          20 000 dinara+pdv ili dođite lično po robu u neki od
                           naših magacina.
                         </li>
                         <li>
                           2. KURIRSKOM SLUŽBOM: <br />
-                          -U našoj organizaciji-troškovi i nacin dostave zavise
+                          -U našoj organizaciji-troškovi i način dostave zavise
                           od gabarita i težine porudžbine. <br />
                           -U vašoj organizaciji-odaberite sami kurirsku službu
                           za dostavu robe.

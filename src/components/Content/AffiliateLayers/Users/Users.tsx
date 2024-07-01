@@ -54,7 +54,7 @@ const Users: React.FC = () => {
   };
 
   useEffect(() => {
-    routeHistoryUpdate(["Pocetna", "Users"]);
+    routeHistoryUpdate(["Početna", "Users"]);
     getAllUsers();
   }, []);
 
@@ -131,6 +131,24 @@ const Users: React.FC = () => {
     }
   };
 
+  const verifyEmail = async (id: any) => {
+    const token: string | null = localStorage.getItem("accessToken");
+    if (token) {
+      const header = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      return await axios
+        .post(`${baseApi}/users/VerifyEmailById`, { selected: id }, header)
+        .then((res) => {
+          alert("Sent Successfully.");
+        })
+        .catch((err) => {});
+    }
+  };
+
   return (
     <div className="block">
       <div className="container">
@@ -146,6 +164,7 @@ const Users: React.FC = () => {
             categories={categories}
             DeleteById={DeleteById}
             verifyPhone={verifyPhone}
+            verifyEmail={verifyEmail}
             getAllUsers={getAllUsers}
           />
         </Space>

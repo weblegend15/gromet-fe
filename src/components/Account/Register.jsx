@@ -18,8 +18,7 @@ const Register = ({ setAccount }) => {
     password: "",
     cpassword: "",
     sumvalue: "",
-    agreevalue: false
-
+    agreevalue: false,
   });
 
   const validateForm = (values) => {
@@ -36,7 +35,7 @@ const Register = ({ setAccount }) => {
     if (!values.password) {
       errors.password = "Password is required";
     }
-    if (values.password?.length<6) {
+    if (values.password?.length < 6) {
       errors.password = "Password must be more than 6 letters";
     }
     if (!values.cpassword) {
@@ -57,7 +56,7 @@ const Register = ({ setAccount }) => {
     if (values.phonenumber?.length <= 7) {
       errors.phonenumber = "Invalid Serbian PhoneNumber format";
     }
-    if (values.sumvalue !== '7') {
+    if (values.sumvalue !== "7") {
       errors.sumvalue = "Input Correct value";
     }
     if (values.agreevalue === false) {
@@ -68,78 +67,64 @@ const Register = ({ setAccount }) => {
 
   const handleChange = (e) => {
     let { name, value } = e.target;
-    let errorMessage = '';
+    let errorMessage = "";
 
-
-
-    if (name === 'companyname') {
+    if (name === "companyname") {
       if (!value.trim()) {
-        errorMessage = 'CompanyName is required';
+        errorMessage = "CompanyName is required";
       }
-    }
-    else if (name === 'username') {
+    } else if (name === "username") {
       if (!value.trim()) {
-        errorMessage = 'Username is required';
+        errorMessage = "Username is required";
       }
-    }
-    else if (name === 'pib') {
+    } else if (name === "pib") {
       if (!value) {
-        errorMessage = 'PIB is required';
+        errorMessage = "PIB is required";
       }
-    }
-    else if (name === 'phonenumber') {
+    } else if (name === "phonenumber") {
       if (!value) {
-        errorMessage = 'PhoneNumber is required';
+        errorMessage = "PhoneNumber is required";
       } else {
-        value = value.replace(/[^0-9]/g, '').slice(0, 9);
-        if (value?.length < 8)
-          errorMessage = 'Invalid Serbian Phone Number';
+        value = value.replace(/[^0-9]/g, "").slice(0, 9);
+        if (value?.length < 8) errorMessage = "Invalid Serbian Phone Number";
       }
-    }
-    else if (name === 'email') {
+    } else if (name === "email") {
       const regex = /^[^\s+@]+@[^\s@]+\.[^\s@]{2,}$/i;
       if (!value.trim()) {
-        errorMessage = 'Email is required';
+        errorMessage = "Email is required";
       } else if (!regex.test(value)) {
-        errorMessage = 'Invalid email format';
+        errorMessage = "Invalid email format";
       }
-    }
-    else if (name === 'password') {
+    } else if (name === "password") {
       if (!value) {
-        errorMessage = 'Password is required';
+        errorMessage = "Password is required";
+      } else if (value?.length < 6) {
+        errorMessage = "Password must be more than 6 letters";
       }
-      else if(value?.length<6)
-      {
-        errorMessage = 'Password must be more than 6 letters';
-      }
-    }
-    else if (name === 'cpassword') {
+    } else if (name === "cpassword") {
       if (!value) {
-        errorMessage = 'Confirm Password is required';
+        errorMessage = "Confirm Password is required";
       } else if (value !== user.password) {
-        errorMessage = 'Passwords do not match';
+        errorMessage = "Passwords do not match";
       }
-    }
-    else if (name === 'sumvalue') {
-      if (value !== '7') {
-        errorMessage = 'Input Correct value';
+    } else if (name === "sumvalue") {
+      if (value !== "7") {
+        errorMessage = "Input Correct value";
       }
-    }
-    else if (name === 'agreevalue') {
+    } else if (name === "agreevalue") {
       if (value === false) {
         errorMessage = "Check Agreement";
       }
-
     }
 
     // Update the state with the new value
-    setUserDetails(prevUser => ({
+    setUserDetails((prevUser) => ({
       ...prevUser,
       [name]: value,
     }));
 
     // Update the form errors separately
-    setFormErrors(prevErrors => ({
+    setFormErrors((prevErrors) => ({
       ...prevErrors,
       [name]: errorMessage,
     }));
@@ -148,15 +133,24 @@ const Register = ({ setAccount }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const errors = validateForm(user);
-    console.log(errors)
+    console.log(errors);
     setFormErrors(errors);
 
     if (Object.keys(errors).length === 0) {
       axios
-        .post(`${baseApi}/account/signup`, { companyname:user.companyname, username: user.username, pib:user.pib, email: user.email, password: user.password, phonenumber:user.phonenumber })
+        .post(`${baseApi}/account/signup`, {
+          companyname: user.companyname,
+          username: user.username,
+          pib: user.pib,
+          email: user.email,
+          password: user.password,
+          phonenumber: user.phonenumber,
+        })
         .then((res) => {
           if (res.status === 202) {
-            alert("User signed up successfully. A mail has been sent to you for verification. Please verify your email and login.");
+            alert(
+              "User signed up successfully. A mail has been sent to you for verification. Please verify your email and login."
+            );
             navigate("/account/login", { replace: true });
           }
         })
@@ -165,7 +159,7 @@ const Register = ({ setAccount }) => {
             alert("This email has been registered already. Please login.");
             navigate("/account/login", { replace: true });
           } else if (error.response.status === 500) {
-            alert('Server error!');
+            alert("Server error!");
             navigate("/", { replace: true });
             setAccount(false);
           }
@@ -189,7 +183,7 @@ const Register = ({ setAccount }) => {
           {formErrors.companyname && (
             <p className={baseStyle.error}>{formErrors.companyname}</p>
           )}
-          
+
           <input
             type="text"
             name="pib"
@@ -255,10 +249,10 @@ const Register = ({ setAccount }) => {
           {formErrors.cpassword && (
             <p className={baseStyle.error}>{formErrors.cpassword}</p>
           )}
-          <div style={{ marginTop: '20px' }}>
+          <div style={{ marginTop: "20px" }}>
             <span>Anti Spam Protection: How much 1 + 6 ?</span>
             <input
-              style={{ marginTop: '5px' }}
+              style={{ marginTop: "5px" }}
               type="number"
               name="sumvalue"
               placeholder="Choose..."
@@ -271,10 +265,24 @@ const Register = ({ setAccount }) => {
             <p className={baseStyle.error}>{formErrors.sumvalue}</p>
           )}
 
-
-          <div style={{ display: "flex", flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: '10px' }}>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center",
+              marginTop: "10px",
+            }}
+          >
             <label for="agreevalue">Do you agree?</label>
-            <input type="checkbox" style={{ margin: 0, width: '10%' }} name="agreevalue" id="agreevalue" onChange={handleChange} checked={user.agreevalue}></input>
+            <input
+              type="checkbox"
+              style={{ margin: 0, width: "10%" }}
+              name="agreevalue"
+              id="agreevalue"
+              onChange={handleChange}
+              checked={user.agreevalue}
+            ></input>
           </div>
 
           {formErrors.agreevalue && (
@@ -285,7 +293,6 @@ const Register = ({ setAccount }) => {
             Register
           </button>
         </form>
-        <Link to="/account/login">Already registered? Login</Link>
       </div>
     </div>
   );

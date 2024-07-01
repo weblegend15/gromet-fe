@@ -27,7 +27,7 @@ const OrderSide = ({ product, value }: Props) => {
         setRebate(v.value);
       }
     });
-  }, [product]);
+  }, []);
   const imagePath = getImagePath(product as Product);
 
   const imageSrc = `${baseApi}/assets/products/` + imagePath + ".webp";
@@ -162,7 +162,7 @@ const OrderSide = ({ product, value }: Props) => {
                         {v.itemNum?.naziv_artikla}
                       </div>
                       <div style={{ margin: "5px" }}>
-                        <b>Kolicina:</b> {v.count}
+                        <b>Količina:</b> {v.count}
                       </div>
                       <div style={{ margin: "5px" }}>
                         <b>Ukupna vrednost bez PDV-a:</b>{" "}
@@ -198,7 +198,7 @@ const OrderSide = ({ product, value }: Props) => {
                   <div style={{ width: "100%" }}>
                     <div style={{ margin: "5px" }}>{product.naziv_artikla}</div>
                     <div style={{ margin: "5px" }}>
-                      <b>Kolicina:</b> {value}
+                      <b>Količina:</b> {value}
                     </div>
                     <div style={{ margin: "5px" }}>
                       <b>Ukupna vrednost bez PDV-a:</b>{" "}
