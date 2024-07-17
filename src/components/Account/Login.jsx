@@ -149,16 +149,16 @@ const Login = ({ setAccount }) => {
             style={{
               border: "none",
               backgroundColor: "transparent",
-              color: "blue",
               display: "flex",
               justifyContent: "left",
               paddingLeft: 0,
             }}
+            className={loginStyle.change_color}
             onClick={handleforgot}
           >
             Zaboravili ste lozinku?
           </button>
-          <button className={baseStyle.button_common} onClick={handleLogin}>
+          <button className={loginStyle.hoverbutton} onClick={handleLogin}>
             Prijavite se
           </button>
           <input type="checkbox" />

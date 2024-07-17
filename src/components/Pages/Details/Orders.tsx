@@ -136,94 +136,78 @@ const Orders: React.FC = () => {
   ];
 
   return (
-    <Layout style={{ minHeight: "100vh" }}>
-      <Sider width={200} className="site-layout-background">
-        <Menu
-          mode="inline"
-          defaultSelectedKeys={["2"]}
-          style={{ height: "100%", borderRight: 0 }}
-        >
-          <Menu.Item key="1">
-            <Link to="/">Lični podaci</Link>
-          </Menu.Item>
-          <Menu.Item key="2">
-            <Link to="/orders">Porudžbine</Link>
-          </Menu.Item>
-          <Menu.Item key="3">Promocije/popusti</Menu.Item>
-          <Menu.Item key="4">Istorija</Menu.Item>
-          <Menu.Item key="5">Finansijska kartica</Menu.Item>
-          <Menu.Item key="6">Preporučena kupovina</Menu.Item>
-          <Menu.Item key="7">Pomoć</Menu.Item>
-          <Menu.Item key="8">Moj imenik</Menu.Item>
-        </Menu>
-      </Sider>
-      <Layout style={{ padding: "0 24px 24px" }}>
-        <Content
-          style={{
-            padding: 24,
-            margin: 0,
-            minHeight: 280,
-            backgroundColor: "#fff",
-          }}
-        >
-          <Title level={3}>Porudžbine</Title>
-          <Table
-            columns={columns}
-            dataSource={data}
-            pagination={false}
-            onRow={(record) => ({
-              onClick: () => showModal(record),
-            })}
-          />
-          <Modal
-            title="Detalji porudžbine"
-            visible={visible}
-            onOk={handleOk}
-            onCancel={handleCancel}
-            footer={[
-              <Button key="back" onClick={handleCancel}>
-                Close
-              </Button>,
-            ]}
-          >
-            {currentOrder && (
-              <>
-                <Descriptions bordered>
-                  <Descriptions.Item label="Datum isporuke">
-                    {currentOrder.details.deliveryDate}
-                  </Descriptions.Item>
-                  <Descriptions.Item label="Poručioc">
-                    {currentOrder.details.supplier}
-                  </Descriptions.Item>
-                  <Descriptions.Item label="Adresa isporuke">
-                    {currentOrder.details.address}
-                  </Descriptions.Item>
-                </Descriptions>
-                <Title level={4} style={{ marginTop: "16px" }}>
-                  Istorija statusa
-                </Title>
-                <Timeline>
-                  {currentOrder.details.statusHistory.map((history, index) => (
-                    <Timeline.Item
-                      key={index}
-                      color={
-                        history.status === "Isporučeno"
-                          ? "green"
-                          : history.status === "Poslato"
-                          ? "blue"
-                          : "red"
-                      }
-                    >
-                      {history.status}: {history.date}
-                    </Timeline.Item>
-                  ))}
-                </Timeline>
-              </>
-            )}
-          </Modal>
-        </Content>
-      </Layout>
-    </Layout>
+    <div
+      style={{
+        margin: 0,
+        minHeight: "50vh",
+        backgroundColor: "#fff",
+      }}
+    >
+      <div className="mainBox">
+        <div>
+          <ul className="navBox" style={{ justifyContent: "center" }}>
+            <li className="serviceBox">
+              <h3 style={{ color: " white", margin: 0 }}>Porudžbine</h3>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <Table
+        columns={columns}
+        dataSource={data}
+        pagination={false}
+        size="small"
+        onRow={(record) => ({
+          onClick: () => showModal(record),
+        })}
+      />
+      <Modal
+        title="Detalji porudžbine"
+        visible={visible}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        footer={[
+          <Button key="back" onClick={handleCancel}>
+            Close
+          </Button>,
+        ]}
+      >
+        {currentOrder && (
+          <>
+            <Descriptions bordered>
+              <Descriptions.Item label="Datum isporuke">
+                {currentOrder.details.deliveryDate}
+              </Descriptions.Item>
+              <Descriptions.Item label="Poručioc">
+                {currentOrder.details.supplier}
+              </Descriptions.Item>
+              <Descriptions.Item label="Adresa isporuke">
+                {currentOrder.details.address}
+              </Descriptions.Item>
+            </Descriptions>
+            <Title level={4} style={{ marginTop: "16px" }}>
+              Istorija statusa
+            </Title>
+            <Timeline>
+              {currentOrder.details.statusHistory.map((history, index) => (
+                <Timeline.Item
+                  key={index}
+                  color={
+                    history.status === "Isporučeno"
+                      ? "green"
+                      : history.status === "Poslato"
+                      ? "blue"
+                      : "red"
+                  }
+                >
+                  {history.status}: {history.date}
+                </Timeline.Item>
+              ))}
+            </Timeline>
+          </>
+        )}
+      </Modal>
+    </div>
   );
 };
 

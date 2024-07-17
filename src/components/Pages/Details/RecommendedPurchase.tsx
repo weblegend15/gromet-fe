@@ -69,54 +69,15 @@ const RecommendedPurchase: React.FC = () => {
   };
 
   return (
-    <Layout style={{ minHeight: "100vh" }}>
-      <Header className="header">
-        <div className="logo" />
-      </Header>
-      <Layout>
-        <Sider width={200} className="site-layout-background">
-          <Menu
-            mode="inline"
-            defaultSelectedKeys={["5"]}
-            style={{ height: "100%", borderRight: 0 }}
-            onClick={(e) => setSelectedKey(e.key)}
-          >
-            <Menu.Item key="1" icon={<UserOutlined />}>
-              Lični podaci
-            </Menu.Item>
-            <Menu.Item key="2" icon={<HistoryOutlined />}>
-              Istorija
-            </Menu.Item>
-            <Menu.Item key="3" icon={<CreditCardOutlined />}>
-              Finansijska kartica
-            </Menu.Item>
-            <Menu.Item key="4" icon={<ShopOutlined />}>
-              Preporučena kupovina
-            </Menu.Item>
-            <Menu.Item key="5" icon={<ShopOutlined />}>
-              Preporučena kupovina
-            </Menu.Item>
-            <Menu.Item key="6" icon={<QuestionCircleOutlined />}>
-              Pomoć
-            </Menu.Item>
-            <Menu.Item key="7" icon={<ContactsOutlined />}>
-              Moj imenik
-            </Menu.Item>
-          </Menu>
-        </Sider>
-        <Layout style={{ padding: "0 24px 24px" }}>
-          <Content
-            style={{
-              padding: 24,
-              margin: 0,
-              minHeight: 280,
-            }}
-          >
-            {renderContent()}
-          </Content>
-        </Layout>
-      </Layout>
-    </Layout>
+    <Content
+      style={{
+        padding: 24,
+        margin: 0,
+        minHeight: 280,
+      }}
+    >
+      {renderContent()}
+    </Content>
   );
 };
 

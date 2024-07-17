@@ -20,7 +20,6 @@ let list = [
   ["Finansijska kartica", "financial-card"],
   ["Preporučena kupovina", "recommended-purchase"],
   ["Pomoć", "help"],
-  ["Moj imenik", "my-directory"],
 ];
 
 const Profile: React.FC = () => {
@@ -59,7 +58,7 @@ const Profile: React.FC = () => {
         </div>
         <div className="infoBox">
           <div className="itemBox">
-            <ul style={{ listStyle: "none", padding: 0 }}>
+            <ul style={{ listStyle: "none", padding: 0, width: "200px" }}>
               {list.map((item, idx) => (
                 <li key={item[0] + idx} className="itemWrapper">
                   <Link to={`/account/profile/${item[1]}`}>
@@ -69,7 +68,7 @@ const Profile: React.FC = () => {
               ))}
             </ul>
           </div>
-          <div style={{ width: "100%" }}>
+          <div style={{ width: "100%", padding: "0px 20px" }}>
             <Routes>
               <Route path="/*" element={<MainUser userInfo={userInfo} />} />
               <Route path="/history" element={<History />} />

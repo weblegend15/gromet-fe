@@ -66,6 +66,8 @@ const OrderSide = ({ product, value }: Props) => {
         };
 
         if (value && product._id) {
+          console.log("Project to add: ", product._id);
+
           return await axios
             .post(
               `${baseApi}/cart/createCart`,
@@ -80,6 +82,7 @@ const OrderSide = ({ product, value }: Props) => {
               alert("Added to Cart");
               setLoading(false);
               setOpen(false);
+              getAllCartsWithID();
               return res.data.data;
             })
             .catch((err) => {});

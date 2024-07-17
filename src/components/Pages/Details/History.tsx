@@ -113,7 +113,6 @@ const History: React.FC = () => {
         }
         key="1"
       >
-        {/* Content for Profile tab */}
         <div>
           <h2>Lični podaci</h2>
           <p>Ovo je sadržaj za lične podatke korisnika.</p>

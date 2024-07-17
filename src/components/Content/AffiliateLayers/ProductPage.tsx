@@ -166,11 +166,18 @@ function ProductPage() {
   let currentproductcount = product.count;
 
   const incrementMini = () => {
-    setMini_val((prevValue: number) => Number(prevValue) + 1);
+    setMini_val(
+      (prevValue: number) =>
+        // Number(prevValue) + 50 > product.count
+        // ? product.count :
+        Number(prevValue) + 50
+    );
   };
 
   const decrementMini = () => {
-    setMini_val((prevValue: number) => Number(prevValue) - 1);
+    setMini_val((prevValue: number) =>
+      Number(prevValue) - 50 < 0 ? 0 : Number(prevValue) - 50
+    );
   };
 
   const handleChangeMini = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -181,11 +188,13 @@ function ProductPage() {
   };
 
   const incrementTrans = () => {
-    setTrans_val((prevValue: number) => Number(prevValue) + 1);
+    setTrans_val((prevValue: number) => Number(prevValue) + 50);
   };
 
   const decrementTrans = () => {
-    setTrans_val((prevValue: number) => Number(prevValue) - 1);
+    setTrans_val((prevValue: number) =>
+      Number(prevValue) - 50 < 0 ? 0 : Number(prevValue) - 50
+    );
   };
 
   const handleChangeTrans = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -326,8 +335,12 @@ function ProductPage() {
         document.title = product?.naziv_artikla;
         // setTimeout(() => {
         setProduct(product as Product);
-        setMini_val(product.minimalno_pakovanje);
-        setTrans_val(product.transportno_pakovanje);
+        setMini_val(
+          product.minimalno_pakovanje ? product.minimalno_pakovanje : 0
+        );
+        setTrans_val(
+          product.transportno_pakovanje ? product.transportno_pakovanje : 0
+        );
         if (!window.location.hash) {
           // window.location.hash = product?.sifra_proizvoda[dimensionChosen];
         } else if (Array.isArray(product.sifra_proizvoda)) {
@@ -1271,37 +1284,11 @@ function ProductPage() {
                       >
                         Saznaj više o proizvodu
                       </a>
-                      <ul className="product__meta">
-                        <li className="product__meta-availability">
-                          Šifra artikla:
-                          <span className="text-success">
-                            {Array.isArray(product.sifra_proizvoda)
-                              ? product.sifra_proizvoda[dimensionChosen]
-                              : product.sifra_proizvoda}
-                          </span>
-                        </li>
-                        <li style={{ textAlign: "right" }}>
-                          Minimalno pakovanje:{" "}
-                          {Array.isArray(product.minimalno_pakovanje)
-                            ? product.minimalno_pakovanje[dimensionChosen]
-                            : product.minimalno_pakovanje}
-                        </li>
-                        <li>
-                          Jedinica mere:{" "}
-                          {Array.isArray(product.jedinica_mere)
-                            ? product.jedinica_mere[dimensionChosen]
-                            : product.jedinica_mere}
-                        </li>
-                        <li style={{ textAlign: "right" }}>
-                          Transportno pakovanje:{" "}
-                          {Array.isArray(product.transportno_pakovanje)
-                            ? product.transportno_pakovanje[dimensionChosen]
-                            : product.transportno_pakovanje}
-                        </li>
-                      </ul>
+                      <br></br>
+                      <br></br>
+
                       {product?.naziv_proizvoda_model !== "/" && (
                         <>
-                          <br></br>
                           <label
                             style={{
                               paddingBottom: "10px",
@@ -1383,137 +1370,57 @@ function ProductPage() {
                         </>
                       )}
 
-                      <div
-                        className="divAdditionalDescription"
-                        style={{ borderTop: "0px" }}
-                      ></div>
-
-                      <div style={{ display: "flex", padding: "20px" }}>
-                        <div
-                          style={{
-                            display: "flex",
-                            flexDirection: "row",
-                            alignItems: "center",
-                            textDecoration: "line-through",
-                            opacity: 0.6,
-                            fontSize: "20px",
-                            fontWeight: "700",
-                          }}
-                        >
-                          <div
-                            style={{ marginLeft: "8px", alignItems: "center" }}
-                          >
-                            VP cena: {product.price}
-                          </div>
-                        </div>
-
-                        <div
-                          style={{
-                            display: "flex",
-                            flexDirection: "row",
-                            alignItems: "center",
-                            fontSize: "20px",
-                            fontWeight: "700",
-                            marginLeft: "70px",
-                          }}
-                        >
-                          Neto cena:
-                          <div
-                            style={{
-                              marginLeft: "8px",
-                              alignItems: "center",
-                              color: "#ce8410",
-                            }}
-                          >
-                            {Number(
-                              (product.price * (100 - Number(rebate))) / 100
-                            )}
-                            RSD
-                          </div>
-                        </div>
-                      </div>
-
                       <div style={{ display: "flex" }}>
-                        <div style={{ width: "70%" }}>
-                          <div
-                            style={{
-                              display: "flex",
-                              justifyContent: "space-between",
-                              margin: "5px 0px",
-                            }}
-                          >
-                            <span>Minimalno pakovanje:</span>
-                            <div style={{ display: "flex", gap: 5 }}>
-                              <Space>
-                                <Button
-                                  onClick={decrementMini}
-                                  icon={<MinusOutlined />}
-                                  size="small"
-                                />
-                                <Input
-                                  type="text"
-                                  size="small"
-                                  value={Mini_val}
-                                  onChange={handleChangeMini}
-                                  style={{ width: "40px", textAlign: "center" }}
-                                />
-                                <Button
-                                  onClick={incrementMini}
-                                  icon={<PlusOutlined />}
-                                  size="small"
-                                />
-                              </Space>
-                              <OrderSide
-                                product={product as Product}
-                                value={Mini_val}
-                              />
-                            </div>
-                          </div>
-                          <div
-                            style={{
-                              display: "flex",
-                              justifyContent: "space-between",
-                              margin: "5px 0px",
-                            }}
-                          >
-                            <span>Transportno pakovanje:</span>
-                            <div style={{ display: "flex", gap: 5 }}>
-                              <Space>
-                                <Button
-                                  onClick={decrementTrans}
-                                  icon={<MinusOutlined />}
-                                  size="small"
-                                />
-                                <Input
-                                  type="text"
-                                  size="small"
-                                  value={Trans_val}
-                                  onChange={handleChangeTrans}
-                                  style={{ width: "40px", textAlign: "center" }}
-                                />
-                                <Button
-                                  onClick={incrementTrans}
-                                  icon={<PlusOutlined />}
-                                  size="small"
-                                />
-                              </Space>
-                              <OrderSide
-                                product={product as Product}
-                                value={Trans_val}
-                              />
-                            </div>
-                          </div>
-                        </div>
-                        <div
+                        <ul
+                          className="product__meta"
                           style={{
                             width: "30%",
-                            display: "flex",
-                            justifyContent: "flex-end",
-                            alignItems: "center",
+                            borderTop: "0px",
+                            display: "auto",
                           }}
                         >
-                          <div
-                            style={{ marginLeft: "8px", alignItems: "right" }}
+                          <li
+                            className="product__meta-availability"
+                            style={{
+                              display: "flex",
+                              width: "100%",
+                              justifyContent: "space-between",
+                              padding: "0px 20px",
+                            }}
+                          >
+                            <span>Šifra artikla:</span>
+                            <span className="text-success">
+                              {Array.isArray(product.sifra_proizvoda)
+                                ? product.sifra_proizvoda[dimensionChosen]
+                                : product.sifra_proizvoda}
+                            </span>
+                          </li>
+                          {/* <li style={{ textAlign: "right" }}>
+                            Minimalno pakovanje:{" "}
+                            {Array.isArray(product.minimalno_pakovanje)
+                              ? product.minimalno_pakovanje[dimensionChosen]
+                              : product.minimalno_pakovanje}
+                          </li> */}
+                          <li
+                            style={{
+                              display: "flex",
+                              width: "100%",
+                              justifyContent: "space-between",
+                              padding: "0px 20px",
+                            }}
+                          >
+                            <span>Jedinica mere:</span>
+                            {Array.isArray(product.jedinica_mere)
+                              ? product.jedinica_mere[dimensionChosen]
+                              : product.jedinica_mere}
+                          </li>
+                          <li
+                            style={{
+                              display: "flex",
+                              width: "100%",
+                              justifyContent: "space-between",
+                              padding: "0px 20px",
+                            }}
                           >
                             {product.count === 0 && (
                               <div
@@ -1567,35 +1474,151 @@ function ProductPage() {
                                 <p>Na stanju</p>
                               </div>
                             )}
+                          </li>
+                          {/* <li style={{ textAlign: "right" }}>
+                            Transportno pakovanje:{" "}
+                            {Array.isArray(product.transportno_pakovanje)
+                              ? product.transportno_pakovanje[dimensionChosen]
+                              : product.transportno_pakovanje}
+                          </li> */}
+                        </ul>
+
+                        <div
+                          className="divAdditionalDescription"
+                          style={{ borderRight: "solid 1px lightgray" }}
+                        ></div>
+
+                        <div
+                          style={{
+                            padding: "20px",
+                            width: "30%",
+                          }}
+                        >
+                          <div
+                            style={{
+                              display: "flex",
+                              flexDirection: "row",
+                              alignItems: "center",
+                              textDecoration: "line-through",
+                              opacity: 0.6,
+                              fontSize: "14px",
+                              fontWeight: "700",
+                            }}
+                          >
+                            <div
+                              style={{
+                                alignItems: "center",
+                              }}
+                            >
+                              VP cena: {product.price}
+                            </div>
+                          </div>
+
+                          <div
+                            style={{
+                              display: "flex",
+                              flexDirection: "row",
+                              alignItems: "center",
+                              fontSize: "14px",
+                              fontWeight: "700",
+                            }}
+                          >
+                            Neto cena bez PDV-a:
+                            <div
+                              style={{
+                                marginLeft: "8px",
+                                alignItems: "center",
+                                color: "#ce8410",
+                              }}
+                            >
+                              {Number(
+                                (product.price *
+                                  (100 -
+                                    (Number(rebate) ? Number(rebate) : 0))) /
+                                  100
+                              )}
+                              RSD
+                            </div>
+                          </div>
+                        </div>
+
+                        <div
+                          className="divAdditionalDescription"
+                          style={{ borderRight: "solid 1px lightgray" }}
+                        ></div>
+
+                        <div style={{ width: "35%" }}>
+                          <div
+                            style={{
+                              margin: "5px 0px",
+                              textAlign: "center",
+                              display: "flex",
+                              flexDirection: "column",
+                              alignItems: "center",
+                            }}
+                          >
+                            <span>Minimalno pakovanje:</span>
+                            <div
+                              style={{
+                                display: "flex",
+                                gap: 5,
+                                marginTop: "5px",
+                              }}
+                            >
+                              <Space>
+                                <Button
+                                  onClick={decrementMini}
+                                  icon={<MinusOutlined />}
+                                />
+                                <Input
+                                  type="text"
+                                  size="small"
+                                  value={Mini_val}
+                                  onChange={handleChangeMini}
+                                  style={{
+                                    width: "60px",
+                                    height: "40px",
+                                    fontSize: "20px",
+                                    textAlign: "center",
+                                    outline: "none",
+                                  }}
+                                />
+                                <Button
+                                  onClick={incrementMini}
+                                  icon={<PlusOutlined />}
+                                />
+                              </Space>
+                            </div>
+                          </div>
+                          <div
+                            style={{
+                              display: "flex",
+                              justifyContent: "center",
+                              margin: "5px 0px",
+                            }}
+                          >
+                            <span>Transportno pakovanje:</span>
+                            <p
+                              style={{
+                                padding: 0,
+                                margin: 0,
+                                marginLeft: "3px",
+                              }}
+                            >
+                              {Trans_val}
+                            </p>
+                          </div>
+                          <div style={{ textAlign: "center" }}>
+                            <OrderSide
+                              product={product as Product}
+                              value={Mini_val}
+                            />
                           </div>
                         </div>
                       </div>
 
-                      {/* <OrderModal product={product} /> */}
-
                       <div className="divProductActionButtons">
-                        {/* <label className="labelHowToOrder">Za pravna lica</label> */}
                         <div className="divHowToOrderButtons">
-                          {/* {localStorage.getItem("currentUser") === "USER" && (
-                        <Button
-                          className="divProductActionQuantity"
-                          onClick={() => {
-                            setShowFirmTip(() => !showFirmTip);
-                            setShowPersonTip(false);
-                            setShowShipmentTip(false);
-                          }}
-                        >
-                          <div
-                            className="divProductActionQuantityText"
-                            style={{
-                              backgroundColor: showFirmTip ? "#004d8c" : "",
-                            }}
-                          >
-                            PORUČITE
-                          </div>
-                        </Button>
-                      )} */}
-
                           {localStorage.getItem("currentUser") === "ADMIN" && (
                             <Button
                               className="divProductActionQuantity"
@@ -1613,48 +1636,6 @@ function ProductPage() {
                               </div>
                             </Button>
                           )}
-                          {/* 
-                      <div
-                        className="divShowFirmTip divResponsiveFirmTip"
-                        style={
-                          showFirmTip
-                            ? { borderColor: "#9a9a9a", color: "#000" }
-                            : {}
-                        }
-                        hidden={!showFirmTip || showPersonTip}
-                      >
-                        <ul>
-                          <li>
-                            Pozovite 060/0768-777 ili pošaljite porudžbinu na{" "}
-                            <a href="mailto:prodaja@gromet.rs">
-                              {" "}
-                              prodaja@gromet.rs.
-                            </a>
-                          </li>
-                        </ul>
-                      </div>
-
-                      <Button
-                        className="divProductActionQuantity divInfoPhysicalBtn"
-                        onClick={() => {
-                          setShowPersonTip(() => !showPersonTip);
-                          setShowFirmTip(false);
-                          setShowShipmentTip(false);
-                        }}
-                        style={{ fontSize: "16px" }}
-                      >
-                        <div
-                          className="divProductActionQuantityText"
-                          style={{
-                            background: "white",
-                            color: "#00AEEF",
-                            whiteSpace: "normal",
-                            wordBreak: "normal",
-                          }}
-                        >
-                          Informacije za fizička lica
-                        </div>
-                      </Button> */}
 
                           {localStorage.getItem("currentUser") === "ADMIN" && (
                             <Button

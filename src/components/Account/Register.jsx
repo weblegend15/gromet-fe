@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import baseStyle from "./Base.module.css";
 import registerStyle from "./Register.module.css";
+import loginStyle from "./Login.module.css";
 import { baseApi } from "../../constants";
 
 const Register = ({ setAccount }) => {
@@ -289,7 +290,7 @@ const Register = ({ setAccount }) => {
             <p className={baseStyle.error}>{formErrors.agreevalue}</p>
           )}
 
-          <button className={baseStyle.button_common} onClick={handleSubmit}>
+          <button className={loginStyle.hoverbutton} onClick={handleSubmit}>
             Register
           </button>
         </form>

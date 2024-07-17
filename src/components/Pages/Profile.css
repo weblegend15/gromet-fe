@@ -28,6 +28,7 @@
 .itemBox {
   border: 1px solid #acacac;
   border-radius: 10px;
+  width: 200px;
 }
 
 .itemWrapper {
