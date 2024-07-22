@@ -335,12 +335,12 @@ function ProductPage() {
         document.title = product?.naziv_artikla;
         // setTimeout(() => {
         setProduct(product as Product);
-        // setMini_val(
-        //   product.minimalno_pakovanje ? product.minimalno_pakovanje : 0
-        // );
-        // setTrans_val(
-        //   product.transportno_pakovanje ? product.transportno_pakovanje : 0
-        // );
+        setMini_val(
+          product.minimalno_pakovanje ? product.minimalno_pakovanje : 0
+        );
+        setTrans_val(
+          product.transportno_pakovanje ? product.transportno_pakovanje : 0
+        );
         if (!window.location.hash) {
           // window.location.hash = product?.sifra_proizvoda[dimensionChosen];
         } else if (Array.isArray(product.sifra_proizvoda)) {

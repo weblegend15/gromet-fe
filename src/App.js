@@ -49,6 +49,8 @@ import ForgotPass_resetpass from "./components/Account/ForgotPass_resetpass";
 import Cart from "./components/Content/AffiliateLayers/Cart/Cart";
 import Users from "./components/Content/AffiliateLayers/Users/Users";
 import History from "./components/Pages/Details/History";
+import Login from "./components/Account/Login";
+import Register from "./components/Account/Register";
 
 const tagManagerArgs = {
   gtmId: "G-Y8ERRGCNMD",
@@ -404,11 +406,11 @@ function App() {
 
                       <Route
                         path="/account/login"
-                        element={<Auth setAccount={setAccount} />}
+                        element={<Login setAccount={setAccount} />}
                       ></Route>
                       <Route
                         path="/account/signup"
-                        element={<Auth setAccount={setAccount} />}
+                        element={<Register setAccount={setAccount} />}
                       ></Route>
                       <Route
                         path="/account/forgotpass"

@@ -1,6 +1,7 @@
 .login {
   width: 400px;
   background: #ececec;
+  height: calc(100vh - 150px);
   /* border: 1px solid #dddfe2; */
   /* box-shadow: 0 2px 4px rgb(0 0 10 / 64%), 0 8px 16px rgb(0 10 0 / 34%); */
   /* border-radius: 8px; */
@@ -10,13 +11,14 @@
 
 .login > form input {
   border-radius: 4px;
-  border: 2px solid lightgrey;
+  /* border: 2px solid lightgrey; */
   outline: none;
   color: #1d2129;
-  margin-top: 2rem;
-  width: 92%;
+  /* margin-top: 1rem; */
   padding: 12px;
   font-size: 16px;
+  margin: 10px 0px;
+  border-radius: 6px;
 }
 
 .forgotpass {

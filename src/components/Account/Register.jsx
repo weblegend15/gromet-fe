@@ -5,6 +5,8 @@ import baseStyle from "./Base.module.css";
 import registerStyle from "./Register.module.css";
 import loginStyle from "./Login.module.css";
 import { baseApi } from "../../constants";
+import { Input, Select } from "antd";
+import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 
 const Register = ({ setAccount }) => {
   const navigate = useNavigate();
@@ -37,7 +39,8 @@ const Register = ({ setAccount }) => {
       errors.password = "Password is required";
     }
     if (values.password?.length < 6) {
-      errors.password = "Password must be more than 6 letters";
+      errors.password =
+        "*Lozinka treba da sadrži najmanje 8 karaktera, 1 veliko slovo i 1 broj";
     }
     if (!values.cpassword) {
       errors.cpassword = "Confirm Password is required";
@@ -131,6 +134,27 @@ const Register = ({ setAccount }) => {
     }));
   };
 
+  const handleOptionChange = (value) => {
+    console.log(value);
+    const name = "sumvalue";
+    let errorMessage = "";
+
+    if (value !== "5") {
+      errorMessage = "Input Correct value";
+    }
+
+    setUserDetails((prevUser) => ({
+      ...prevUser,
+      [name]: value,
+    }));
+
+    // Update the form errors separately
+    setFormErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: errorMessage,
+    }));
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     const errors = validateForm(user);
@@ -169,131 +193,332 @@ const Register = ({ setAccount }) => {
   };
 
   return (
-    <div className={baseStyle.account}>
-      <div className={registerStyle.register}>
-        <h1>Još uvek nemate nalog?</h1>
-        <h2>Registrujte se</h2>
-        <form>
-          <input
-            type="text"
-            name="companyname"
-            placeholder="Naziv kompanije"
-            onChange={handleChange}
-            value={user.companyname}
-          />
-          {formErrors.companyname && (
-            <p className={baseStyle.error}>{formErrors.companyname}</p>
-          )}
+    <div className="container" style={{ backgroundColor: "#ececec" }}>
+      <div className={baseStyle.account}>
+        <div className={registerStyle.register} style={{ marginTop: 0 }}>
+          <h1 style={{ color: "#004d8c" }}>Još uvek nemate nalog?</h1>
+          <h2 style={{ color: "rgb(27 116 190)" }}>Registrujte se</h2>
+          <form>
+            <div
+              style={{
+                position: "relative",
+              }}
+            >
+              <Input
+                type="text"
+                name="companyname"
+                placeholder="Naziv kompanije"
+                onChange={handleChange}
+                value={user.companyname}
+              />
+              <p
+                style={{
+                  position: "absolute",
+                  top: "-10px",
+                  right: "-20px",
+                  fontSize: "20px",
+                  color: "red",
+                }}
+              >
+                *
+              </p>
+            </div>
+            {formErrors.companyname && (
+              <p className={baseStyle.error}>{formErrors.companyname}</p>
+            )}
 
-          <input
-            type="text"
-            name="pib"
-            placeholder="PIB"
-            onChange={handleChange}
-            value={user.pib}
-          />
-          {formErrors.pib && (
-            <p className={baseStyle.error}>{formErrors.pib}</p>
-          )}
+            <div
+              style={{
+                position: "relative",
+              }}
+            >
+              <Input
+                type="text"
+                name="pib"
+                placeholder="PIB"
+                onChange={handleChange}
+                value={user.pib}
+              />
+              <p
+                style={{
+                  position: "absolute",
+                  top: "-10px",
+                  right: "-20px",
+                  fontSize: "20px",
+                  color: "red",
+                }}
+              >
+                *
+              </p>
+            </div>
+            {formErrors.pib && (
+              <p className={baseStyle.error}>{formErrors.pib}</p>
+            )}
 
-          <input
-            type="text"
-            name="username"
-            placeholder="Username"
-            onChange={handleChange}
-            value={user.username}
-          />
-          {formErrors.username && (
-            <p className={baseStyle.error}>{formErrors.username}</p>
-          )}
+            <div
+              style={{
+                position: "relative",
+              }}
+            >
+              <Input
+                type="text"
+                name="username"
+                placeholder="Username"
+                onChange={handleChange}
+                value={user.username}
+              />
+              <p
+                style={{
+                  position: "absolute",
+                  top: "-10px",
+                  right: "-20px",
+                  fontSize: "20px",
+                  color: "red",
+                }}
+              >
+                *
+              </p>
+            </div>
+            {formErrors.username && (
+              <p className={baseStyle.error}>{formErrors.username}</p>
+            )}
 
-          {/* <div style={{ display: "flex", flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+            {/* <div style={{ display: "flex", flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
             <span style={{ marginTop: '1rem', marginRight: "10px" }}>+381</span> */}
-          <input
-            type="tel"
-            name="phonenumber"
-            placeholder="Broj telefona"
-            onChange={handleChange}
-            value={user.phonenumber}
-          />
-          {/* </div> */}
-          {formErrors.phonenumber && (
-            <p className={baseStyle.error}>{formErrors.phonenumber}</p>
-          )}
-          <input
-            type="email"
-            name="email"
-            placeholder="E-mail"
-            onChange={handleChange}
-            value={user.email}
-          />
-          {formErrors.email && (
-            <p className={baseStyle.error}>{formErrors.email}</p>
-          )}
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            onChange={handleChange}
-            value={user.password}
-          />
-          {formErrors.password && (
-            <p className={baseStyle.error}>{formErrors.password}</p>
-          )}
-          <input
-            type="password"
-            name="cpassword"
-            placeholder="Confirm Password"
-            onChange={handleChange}
-            value={user.cpassword}
-          />
-          {formErrors.cpassword && (
-            <p className={baseStyle.error}>{formErrors.cpassword}</p>
-          )}
-          <div style={{ marginTop: "20px" }}>
-            <span>Anti Spam Protection: How much 1 + 6 ?</span>
-            <input
-              style={{ marginTop: "5px" }}
-              type="number"
-              name="sumvalue"
-              placeholder="Choose..."
-              onChange={handleChange}
-              value={user.sumvalue}
-            />
-          </div>
 
-          {formErrors.sumvalue && (
-            <p className={baseStyle.error}>{formErrors.sumvalue}</p>
-          )}
+            <div
+              style={{
+                position: "relative",
+              }}
+            >
+              <Input
+                type="tel"
+                name="phonenumber"
+                placeholder="Broj telefona"
+                onChange={handleChange}
+                value={user.phonenumber}
+              />
+              <p
+                style={{
+                  position: "absolute",
+                  top: "-10px",
+                  right: "-20px",
+                  fontSize: "20px",
+                  color: "red",
+                }}
+              >
+                *
+              </p>
+            </div>
+            {/* </div> */}
+            {formErrors.phonenumber && (
+              <p className={baseStyle.error}>{formErrors.phonenumber}</p>
+            )}
 
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "center",
-              alignItems: "center",
-              marginTop: "10px",
-            }}
-          >
-            <label for="agreevalue">Do you agree?</label>
-            <input
-              type="checkbox"
-              style={{ margin: 0, width: "10%" }}
-              name="agreevalue"
-              id="agreevalue"
-              onChange={handleChange}
-              checked={user.agreevalue}
-            ></input>
-          </div>
+            <div
+              style={{
+                position: "relative",
+              }}
+            >
+              <Input
+                type="email"
+                name="email"
+                placeholder="E-mail"
+                onChange={handleChange}
+                value={user.email}
+              />
+              <p
+                style={{
+                  position: "absolute",
+                  top: "-10px",
+                  right: "-20px",
+                  fontSize: "20px",
+                  color: "red",
+                }}
+              >
+                *
+              </p>
+            </div>
 
-          {formErrors.agreevalue && (
-            <p className={baseStyle.error}>{formErrors.agreevalue}</p>
-          )}
+            {formErrors.email && (
+              <p className={baseStyle.error}>{formErrors.email}</p>
+            )}
+            <div
+              style={{
+                position: "relative",
+              }}
+            >
+              <Input.Password
+                className={registerStyle.input_password}
+                type="password"
+                name="password"
+                placeholder="Password"
+                onChange={handleChange}
+                value={user.password}
+                iconRender={(visible) =>
+                  visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
+                }
+              />
+              <p
+                style={{
+                  position: "absolute",
+                  top: "-10px",
+                  right: "-20px",
+                  fontSize: "20px",
+                  color: "red",
+                }}
+              >
+                *
+              </p>
+            </div>
+            {formErrors.password && (
+              <p className={baseStyle.error}>{formErrors.password}</p>
+            )}
+            <div
+              style={{
+                position: "relative",
+              }}
+            >
+              <Input.Password
+                className={registerStyle.input_password}
+                type="password"
+                name="cpassword"
+                placeholder="Confirm Password"
+                onChange={handleChange}
+                value={user.cpassword}
+                iconRender={(visible) =>
+                  visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
+                }
+              />
+              <p
+                style={{
+                  position: "absolute",
+                  top: "-10px",
+                  right: "-20px",
+                  fontSize: "20px",
+                  color: "red",
+                }}
+              >
+                *
+              </p>
+            </div>
+            {formErrors.cpassword && (
+              <p className={baseStyle.error}>{formErrors.cpassword}</p>
+            )}
+            <div style={{ marginTop: "20px" }}>
+              <span>Anti spam pitanje: Koliko je 2 + 3</span>
+              <Select
+                placeholder="Odgovor"
+                defaultValue="1"
+                options={[
+                  {
+                    value: "1",
+                    label: "1",
+                  },
+                  {
+                    value: "2",
+                    label: "2",
+                  },
+                  {
+                    value: "6",
+                    label: "6",
+                  },
+                  {
+                    value: "5",
+                    label: "5",
+                  },
+                ]}
+                name="sumvalue"
+                onChange={handleOptionChange}
+                value={user.sumvalue}
+                size="large"
+                style={{ width: "100%", margin: "5px 0px" }}
+              />
+            </div>
 
-          <button className={loginStyle.hoverbutton} onClick={handleSubmit}>
-            Register
-          </button>
-        </form>
+            {formErrors.sumvalue && (
+              <p className={baseStyle.error}>{formErrors.sumvalue}</p>
+            )}
+
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "left",
+                alignItems: "center",
+                marginTop: "10px",
+              }}
+            >
+              <input
+                type="checkbox"
+                style={{
+                  margin: 0,
+                  width: "10%",
+                  height: "20px",
+                  marginLeft: "6px",
+                }}
+                name="news"
+                id="news"
+              ></input>
+              <label for="agreevalue">
+                Želim da mi Gromet šalje vesti, savete i marketinške ponude,
+                pročitaj više
+              </label>
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "left",
+                alignItems: "left",
+                marginTop: "10px",
+              }}
+            >
+              <input
+                type="checkbox"
+                style={{ margin: 0, width: "10%" }}
+                name="agreevalue"
+                id="agreevalue"
+                onChange={handleChange}
+                // checked={user.agreevalue}
+              ></input>
+              <label for="agreevalue">Prihvatam Uslove korišćenja</label>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "left",
+                alignItems: "left",
+                marginTop: "10px",
+              }}
+            >
+              <input
+                type="checkbox"
+                style={{ margin: 0, width: "10%" }}
+                name="checker"
+                id="checker"
+                onChange={handleChange}
+                // checked={user.checker}
+              ></input>
+              <label for="checker">
+                Slažem se sa Gromet Politikom privatnosti
+              </label>
+            </div>
+            {formErrors.checker && (
+              <p className={baseStyle.error}>{formErrors.checker}</p>
+            )}
+
+            <button className={loginStyle.hoverbutton} onClick={handleSubmit}>
+              Register
+            </button>
+            <p>
+              *Nakon potvrde unetih podataka Gromet će verifikovati Vaš nalog u
+              roku od 24h.
+            </p>
+          </form>
+        </div>
       </div>
     </div>
   );

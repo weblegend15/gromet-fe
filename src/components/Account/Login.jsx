@@ -4,11 +4,13 @@ import { useNavigate, Link } from "react-router-dom";
 import baseStyle from "./Base.module.css";
 import loginStyle from "./Login.module.css";
 import { baseApi } from "../../constants";
+import { Alert, Checkbox, Input } from "antd";
 
 const Login = ({ setAccount }) => {
   const navigate = useNavigate();
   const [formErrors, setFormErrors] = useState({});
   const [user, setUserDetails] = useState({ email: "", password: "" });
+  const [error, setError] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -99,13 +101,15 @@ const Login = ({ setAccount }) => {
             navigate("/", { replace: true });
             setAccount(false);
           }
+          setError(false);
         })
         .catch((error) => {
           if (error.response.status === 404) {
             alert("This email is not registered yet. Please sing up first.");
             setUserDetails({ email: "", password: "" });
           } else if (error.response.status === 400) {
-            alert("Password is incorrect.");
+            // alert("Password is incorrect.");
+            setError(true);
             setUserDetails({
               ...user,
               password: "",
@@ -120,51 +124,104 @@ const Login = ({ setAccount }) => {
   };
 
   return (
-    <div className={baseStyle.account}>
-      <div className={loginStyle.login}>
-        <h1>Registrovani korisnik</h1>
-        <h2>Prijavi se</h2>
-        <form>
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            onChange={handleChange}
-            value={user.email}
-          />
-          {formErrors.email && (
-            <p className={baseStyle.error}>{formErrors.email}</p>
+    <div className="container" style={{ backgroundColor: "#ececec" }}>
+      <div className={baseStyle.account}>
+        <div className={loginStyle.login}>
+          <h1 style={{ color: "#004d8c" }}>Registrovani korisnik</h1>
+          <h2 style={{ color: "rgb(27 116 190)" }}>Prijavi se</h2>
+          <form>
+            <div
+              style={{
+                position: "relative",
+              }}
+            >
+              <Input
+                type="email"
+                name="email"
+                placeholder="Email"
+                onChange={handleChange}
+                value={user.email}
+                style={error ? { backgroundColor: "#ffe8e8" } : {}}
+              />
+              <p
+                style={{
+                  position: "absolute",
+                  top: "-10px",
+                  right: "-20px",
+                  fontSize: "20px",
+                  color: "red",
+                }}
+              >
+                *
+              </p>
+            </div>
+            {formErrors.email && (
+              <p className={baseStyle.error}>{formErrors.email}</p>
+            )}
+            <div
+              style={{
+                position: "relative",
+              }}
+            >
+              <Input
+                type="password"
+                name="password"
+                placeholder="Password"
+                onChange={handleChange}
+                value={user.password}
+                style={error ? { backgroundColor: "#ffe8e8" } : {}}
+              />
+              <p
+                style={{
+                  position: "absolute",
+                  top: "-10px",
+                  right: "-20px",
+                  fontSize: "20px",
+                  color: "red",
+                }}
+              >
+                *
+              </p>
+            </div>
+            {formErrors.password && (
+              <p className={baseStyle.error}>{formErrors.password}</p>
+            )}
+            <button
+              style={{
+                border: "none",
+                backgroundColor: "transparent",
+                display: "flex",
+                justifyContent: "left",
+                paddingLeft: 0,
+              }}
+              className={loginStyle.change_color}
+              onClick={handleforgot}
+            >
+              Zaboravili ste lozinku?
+            </button>
+            <button className={loginStyle.hoverbutton} onClick={handleLogin}>
+              Prijavite se
+            </button>
+            <br />
+            <div style={{ marginTop: "10px", textAlign: "left" }}>
+              <Checkbox type="checkbox" />
+              <label>Zapamti me</label>
+            </div>
+            <br />
+          </form>
+          <span>Imate firmu, a još uvek nemate nalog?</span>
+          <br />
+          <Link to="/account/signup">REGISTRUJTE SE</Link>
+
+          {error && (
+            <Alert
+              style={{ marginTop: "10px" }}
+              message="Pogrešno ste uneli e-mail ili lozinku. "
+              description="(Ukoliko ste zaboravili lozinku kliknite na link “Zaboravili ste lozinku?” iznad."
+              type="error"
+            />
           )}
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            onChange={handleChange}
-            value={user.password}
-          />
-          {formErrors.password && (
-            <p className={baseStyle.error}>{formErrors.password}</p>
-          )}
-          <button
-            style={{
-              border: "none",
-              backgroundColor: "transparent",
-              display: "flex",
-              justifyContent: "left",
-              paddingLeft: 0,
-            }}
-            className={loginStyle.change_color}
-            onClick={handleforgot}
-          >
-            Zaboravili ste lozinku?
-          </button>
-          <button className={loginStyle.hoverbutton} onClick={handleLogin}>
-            Prijavite se
-          </button>
-          <input type="checkbox" />
-          <label>Zapamti me</label>
-        </form>
-        <Link to="/account/signup">Not yet registered? Register Now</Link>
+        </div>
       </div>
     </div>
   );
